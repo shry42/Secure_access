@@ -37,6 +37,20 @@ dependencies:
   cupertino_icons: ^1.0.6
   get: ^4.6.6
   permission_handler: ^11.3.1
+  intl_phone_field: ^3.2.0
+  syncfusion_flutter_signaturepad:
+  animate_do: ^3.3.4
+  fluttertoast: ^8.2.5
+  shimmer_animation: ^2.1.0+1
+  http: ^1.2.1
+  image_picker: ^1.1.1
+  confetti: ^0.7.0
+  cloud_firestore: ^4.17.4
+  flutter_face_api: ^6.1.2
+  firebase_core: ^2.31.1
+  uuid: ^4.4.0
+  google_mlkit_face_detection: ^0.11.0
+  audioplayers: ^6.0.0
 
 dev_dependencies:
   flutter_test:

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:secure_access/screens/first_visit_screen.dart';
+import 'package:secure_access/screens/provide_phone_number_screen.dart';
 
 class CaptureImageScreen extends StatefulWidget {
   const CaptureImageScreen({super.key});
@@ -15,7 +16,8 @@ class _CaptureImageScreenState extends State<CaptureImageScreen> {
   void initState() {
     Future.delayed(const Duration(milliseconds: 1500), () {
       Get.to(() =>
-          const FirstVisitScreen()); // Replace NextScreen with the actual name of the next screen
+          // const FirstVisitScreen()
+          const ProvidePhoneNumberScreen()); // Replace NextScreen with the actual name of the next screen
     });
     super.initState();
   }
