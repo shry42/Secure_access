@@ -13,6 +13,7 @@ import 'package:secure_access/authenticate_face/user_details_view.dart';
 import 'package:secure_access/common/utils/custom_snackbar.dart';
 import 'package:secure_access/common/utils/extensions/size_extension.dart';
 import 'package:secure_access/common/utils/extract_face_feature.dart';
+import 'package:secure_access/common/utils/screen_size_util.dart';
 import 'package:secure_access/common/views/camera_view.dart';
 import 'package:secure_access/common/views/custom_button.dart';
 import 'package:secure_access/constants/theme.dart';
@@ -68,6 +69,7 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
 
   @override
   Widget build(BuildContext context) {
+    initializeUtilContexts(context);
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -296,8 +298,8 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => EnterDetailsView(
-              image: _capturedImage,
-              faceFeatures: _faceFeatures,
+              image: _capturedImage!,
+              faceFeatures: _faceFeatures!,
             ),
           ),
         );
@@ -358,8 +360,8 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => EnterDetailsView(
-              image: _capturedImage,
-              faceFeatures: _faceFeatures,
+              image: _capturedImage!,
+              faceFeatures: _faceFeatures!,
             ),
           ),
         );
@@ -368,8 +370,8 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => EnterDetailsView(
-              image: _capturedImage,
-              faceFeatures: _faceFeatures,
+              image: _capturedImage!,
+              faceFeatures: _faceFeatures!,
             ),
           ),
         );
@@ -436,5 +438,10 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
         );
       },
     );
+  }
+
+  void initializeUtilContexts(BuildContext context) {
+    ScreenSizeUtil.context = context;
+    CustomSnackBar.context = context;
   }
 }
