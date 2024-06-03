@@ -48,115 +48,113 @@ class _ProvidePhoneNumberScreenState extends State<ProvidePhoneNumberScreen> {
     // print(currentDate);
     // print(currentTime);
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: Form(
+        key: _formKey,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                GestureDetector(
-                    onTap: () {
-                      Get.back();
-                    },
-                    child: const Icon(
-                      Icons.arrow_back_ios,
-                    )),
-                const SizedBox(
-                  width: 220,
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(2, 192, 198, 199),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                        onTap: () {
+                          Get.back();
+                        },
+                        child: const Icon(
+                          Icons.arrow_back_ios,
+                        )),
+                    const SizedBox(
+                      width: 220,
                     ),
-                  ),
-                  onPressed: () async {
-                    // Get.to(const FirstVisitScreen());
-                    if (_formKey.currentState!.validate()) {
-                      await ubnc.getNamesList(int.parse(_phoneController.text));
-                      if (AppController.noMatched == 'No') {
-                        Get.to(MayIKnowYourPurposeScreen(
-                          countryCode: selectedCountryCode,
-                          mobileNumber: _phoneController.text,
-                        ));
-                      } else {
-                        Get.to(const WhomMeetingTodayScreen());
-                      }
-                    }
-                  },
-                  child: const Text(
-                    'Next',
-                    style: TextStyle(color: Colors.black),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(2, 192, 198, 199),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                      ),
+                      onPressed: () async {
+                        // Get.to(const FirstVisitScreen());
+                        if (_formKey.currentState!.validate()) {
+                          await ubnc
+                              .getNamesList(int.parse(_phoneController.text));
+                          if (AppController.noMatched == 'No') {
+                            Get.to(MayIKnowYourPurposeScreen(
+                              countryCode: selectedCountryCode,
+                              mobileNumber: _phoneController.text,
+                            ));
+                          } else {
+                            Get.to(const WhomMeetingTodayScreen());
+                          }
+                        }
+                      },
+                      child: const Text(
+                        'Next',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 15),
+                const Text(
+                  'Please provide your phone number',
+                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 320,
+                      height: 65,
+                      child: IntlPhoneField(
+                        validator: (Value) {
+                          if (Value == null) {
+                            return 'Please enter Mobile Number';
+                          }
+                        },
+                        controller: _phoneController,
+                        flagsButtonPadding: const EdgeInsets.all(8),
+                        dropdownIconPosition: IconPosition.trailing,
+                        decoration: InputDecoration(
+                          labelText: 'Phone Number',
+                          border: OutlineInputBorder(
+                            borderSide: const BorderSide(),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                        ),
+                        initialCountryCode: 'IN',
+                        onChanged: (phone) {
+                          // Update the selectedCountryCode when the country code changes
+                          selectedCountryCode = phone.countryCode!;
+                        },
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 25),
+                const Text(
+                  'if your visit is scheduled, Scan your QR Code',
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 15),
+                CircleAvatar(
+                  backgroundColor: Colors.grey,
+                  radius: 32,
+                  child: CircleAvatar(
+                    backgroundColor: Colors.white,
+                    radius: 31,
+                    child: Image.asset(
+                      'assets/images/qr.png',
+                      height: 32,
+                    ),
                   ),
                 ),
               ],
             ),
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              const Text(
-                'Please provide your phone number',
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 25),
-              Row(
-                children: [
-                  Container(
-                    width: 330,
-                    height: 65,
-                    child: IntlPhoneField(
-                      validator: (Value) {
-                        if (Value == null) {
-                          return 'Please enter Mobile Number';
-                        }
-                      },
-                      controller: _phoneController,
-                      flagsButtonPadding: const EdgeInsets.all(8),
-                      dropdownIconPosition: IconPosition.trailing,
-                      decoration: InputDecoration(
-                        labelText: 'Phone Number',
-                        border: OutlineInputBorder(
-                          borderSide: const BorderSide(),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                      ),
-                      initialCountryCode: 'IN',
-                      onChanged: (phone) {
-                        // Update the selectedCountryCode when the country code changes
-                        selectedCountryCode = phone.countryCode!;
-                      },
-                    ),
-                  )
-                ],
-              ),
-              const SizedBox(height: 15),
-              const Text(
-                'if your visit is scheduled, Scan your QR Code',
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 15),
-              CircleAvatar(
-                backgroundColor: Colors.grey,
-                radius: 32,
-                child: CircleAvatar(
-                  backgroundColor: Colors.white,
-                  radius: 31,
-                  child: Image.asset(
-                    'assets/images/qr.png',
-                    height: 32,
-                  ),
-                ),
-              )
-            ],
           ),
         ),
       ),

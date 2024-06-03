@@ -29,56 +29,50 @@ class _FirstVisitScreenState extends State<FirstVisitScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                GestureDetector(
-                    onTap: () {
-                      Get.back();
-                    },
-                    child: const Icon(
-                      Icons.arrow_back_ios,
-                    )),
-                const SizedBox(
-                  width: 220,
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 150, 199, 24),
-                  ),
-                  onPressed: () {
-                    // Get.to(const MayIKnowYourPurposeScreen());
-                    if (_formKey.currentState!.validate()) {
-                      Get.to(
-                        WhomMeetingTodayScreen(
-                          countryCode: widget.countryCode,
-                          mobNo: widget.mobNo,
-                          purpose: widget.purpose,
-                          fullName: fullNameController.text,
-                          email: emailController.text,
-                        ),
-                      );
-                    }
-                  },
-                  child: const Text('Next'),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
       body: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,
             child: Column(
               children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                        onTap: () {
+                          Get.back();
+                        },
+                        child: const Icon(
+                          Icons.arrow_back_ios,
+                        )),
+                    const SizedBox(
+                      width: 220,
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            const Color.fromARGB(255, 150, 199, 24),
+                      ),
+                      onPressed: () {
+                        // Get.to(const MayIKnowYourPurposeScreen());
+                        if (_formKey.currentState!.validate()) {
+                          Get.to(
+                            WhomMeetingTodayScreen(
+                              countryCode: widget.countryCode,
+                              mobNo: widget.mobNo,
+                              purpose: widget.purpose,
+                              fullName: fullNameController.text,
+                              email: emailController.text,
+                            ),
+                          );
+                        }
+                      },
+                      child: const Text('Next'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
                 const Text(
                   'Hello! I guess you\'re visiting us for the first time .\n May I know your details?',
                   style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
@@ -91,7 +85,7 @@ class _FirstVisitScreenState extends State<FirstVisitScreen> {
                           color: const Color.fromARGB(255, 221, 216, 216),
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.circular(10)),
-                      width: 280,
+                      width: 270,
                       height: 40,
                       child: Center(
                         child: Text(
@@ -100,7 +94,7 @@ class _FirstVisitScreenState extends State<FirstVisitScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 15),
+                    const SizedBox(width: 10),
                     const CircleAvatar(
                       // child: Image.asset(''),
                       radius: 20,
@@ -109,78 +103,68 @@ class _FirstVisitScreenState extends State<FirstVisitScreen> {
                   ],
                 ),
                 const SizedBox(height: 15),
-                Padding(
-                  //padding: const EdgeInsets.only(left:15.0,right: 15.0,top:0,bottom: 0),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
-                  child: TextFormField(
-                    // controller: emailController,
-                    controller: fullNameController,
-                    // initialValue: widget.firstName,
-                    onChanged: (value) {
-                      // AppController.setemailId(emailController.text);
-                      // c.userName.value = emailController.text;
-                    },
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 6, horizontal: 8),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      labelText: '    Full Name',
-                      // hintText: 'username',
+                TextFormField(
+                  // controller: emailController,
+                  controller: fullNameController,
+                  // initialValue: widget.firstName,
+                  onChanged: (value) {
+                    // AppController.setemailId(emailController.text);
+                    // c.userName.value = emailController.text;
+                  },
+                  decoration: InputDecoration(
+                    contentPadding:
+                        const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.deny(
-                          RegExp(r'\s')), // no spaces allowed
-                    ],
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return "Please enter a name";
-                      } else if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
-                        return "Name can only contain alphabets and spaces";
-                      }
-                      return null;
-                    },
+                    labelText: '    Full Name',
+                    // hintText: 'username',
                   ),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.deny(
+                        RegExp(r'\s')), // no spaces allowed
+                  ],
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return "Please enter a name";
+                    } else if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
+                      return "Name can only contain alphabets and spaces";
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 10),
-                Padding(
-                  //padding: const EdgeInsets.only(left:15.0,right: 15.0,top:0,bottom: 0),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
-                  child: TextFormField(
-                    // controller: emailController,
-                    controller: emailController,
-                    // initialValue: widget.firstName,
-                    onChanged: (value) {
-                      // AppController.setemailId(emailController.text);
-                      // c.userName.value = emailController.text;
-                    },
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 6, horizontal: 8),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      labelText: '    Email',
-                      // hintText: 'username',
+                TextFormField(
+                  // controller: emailController,
+                  controller: emailController,
+                  // initialValue: widget.firstName,
+                  onChanged: (value) {
+                    // AppController.setemailId(emailController.text);
+                    // c.userName.value = emailController.text;
+                  },
+                  decoration: InputDecoration(
+                    contentPadding:
+                        const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.deny(
-                          RegExp(r'\s')), // no spaces allowed
-                    ],
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return "Please enter an email address";
-                      } else if (!RegExp(
-                              r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$")
-                          .hasMatch(value)) {
-                        return "Please enter a valid email address";
-                      }
-                      return null;
-                    },
+                    labelText: '    Email',
+                    // hintText: 'username',
                   ),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.deny(
+                        RegExp(r'\s')), // no spaces allowed
+                  ],
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return "Please enter an email address";
+                    } else if (!RegExp(
+                            r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$")
+                        .hasMatch(value)) {
+                      return "Please enter a valid email address";
+                    }
+                    return null;
+                  },
                 ),
               ],
             ),

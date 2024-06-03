@@ -25,48 +25,44 @@ class _MayIKnowYourPurposeScreenState extends State<MayIKnowYourPurposeScreen> {
     // print(widget.countryCode);
     // print(widget.mobileNumber);
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        actions: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              GestureDetector(
-                  onTap: () {
-                    Get.back();
-                  },
-                  child: const Icon(
-                    Icons.arrow_back_ios,
-                  )),
-              const SizedBox(
-                width: 320,
-              ),
-              // ElevatedButton(
-              //   style: ElevatedButton.styleFrom(
-              //     backgroundColor: const Color.fromARGB(255, 150, 199, 24),
-              //     shape: RoundedRectangleBorder(
-              //       borderRadius: BorderRadius.circular(5),
-              //     ),
-              //   ),
-              //   onPressed: () {
-              //     Get.to(const FirstVisitScreen());
-              //   },
-              //   child: const Text('Next'),
-              // ),
-            ],
-          ),
-        ],
-      ),
       body: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
         child: Column(
           children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                GestureDetector(
+                    onTap: () {
+                      Get.back();
+                    },
+                    child: const Icon(
+                      Icons.arrow_back_ios,
+                    )),
+
+                // ElevatedButton(
+                //   style: ElevatedButton.styleFrom(
+                //     backgroundColor: const Color.fromARGB(255, 150, 199, 24),
+                //     shape: RoundedRectangleBorder(
+                //       borderRadius: BorderRadius.circular(5),
+                //     ),
+                //   ),
+                //   onPressed: () {
+                //     Get.to(const FirstVisitScreen());
+                //   },
+                //   child: const Text('Next'),
+                // ),
+              ],
+            ),
+            const SizedBox(height: 20),
             const Text(
               'May I know the purpose of your visit?',
               style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 25),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 GestureDetector(
                   onTap: () {
@@ -112,6 +108,7 @@ class _MayIKnowYourPurposeScreenState extends State<MayIKnowYourPurposeScreen> {
             ),
             const SizedBox(height: 15),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 GestureDetector(
                   onTap: () {
@@ -154,6 +151,7 @@ class _MayIKnowYourPurposeScreenState extends State<MayIKnowYourPurposeScreen> {
             ),
             const SizedBox(height: 15),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 GestureDetector(
                   onTap: () {
@@ -196,6 +194,7 @@ class _MayIKnowYourPurposeScreenState extends State<MayIKnowYourPurposeScreen> {
             ),
             const SizedBox(height: 15),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 GestureDetector(
                   onTap: () {
@@ -238,6 +237,7 @@ class _MayIKnowYourPurposeScreenState extends State<MayIKnowYourPurposeScreen> {
             ),
             const SizedBox(height: 15),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 GestureDetector(
                   onTap: () {

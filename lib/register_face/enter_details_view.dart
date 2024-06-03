@@ -8,15 +8,16 @@ import 'package:secure_access/common/views/custom_button.dart';
 import 'package:secure_access/constants/theme.dart';
 import 'package:secure_access/main.dart';
 import 'package:secure_access/model_face/user_model.dart';
+import 'package:secure_access/screens/ml_start_screen.dart';
 import 'package:uuid/uuid.dart';
 
 class EnterDetailsView extends StatefulWidget {
   final String image;
-  final FaceFeatures faceFeatures;
+  final FaceFeatures? faceFeatures;
   const EnterDetailsView({
     Key? key,
     required this.image,
-    required this.faceFeatures,
+    this.faceFeatures,
   }) : super(key: key);
 
   @override
@@ -103,7 +104,7 @@ class _EnterDetailsViewState extends State<EnterDetailsView> {
                           //   ..pop()
                           //   ..pop()
                           //   ..pop();
-                          Get.offAll(const Home());
+                          Get.offAll(const MLStartScreen());
                         });
                       });
                     }

@@ -52,75 +52,69 @@ class _WhomMeetingTodayScreenState extends State<WhomMeetingTodayScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                GestureDetector(
-                    onTap: () {
-                      Get.back();
-                    },
-                    child: const Icon(
-                      Icons.arrow_back_ios,
-                    )),
-                const SizedBox(
-                  width: 220,
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(2, 192, 198, 199),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      if (AppController.noMatched == 'No') {
-                        Get.to(CarryingAssetsScreen(
-                          countryCode: widget.countryCode,
-                          fullName: widget.fullName,
-                          email: widget.email,
-                          mobNo: widget.mobNo,
-                          purpose: widget.purpose,
-                          meetingFor: nameId,
-                        ));
-                      } else {
-                        Get.to(
-                          MayIKnowYourPurposeScreen(
-                            countryCode: AppController.countryCode,
-                            mobileNumber: AppController.mobile,
-                            meetingFor: nameId,
-                          ),
-                        );
-                      }
-                    }
-                  },
-                  child: const Text(
-                    'Next',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
       body: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 25),
         child: Form(
           key: _formKey,
           child: Column(
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                      onTap: () {
+                        Get.back();
+                      },
+                      child: const Icon(
+                        Icons.arrow_back_ios,
+                      )),
+                  // const SizedBox(
+                  //   width: 220,
+                  // ),
+                  // Spacer(),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(2, 192, 198, 199),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        if (AppController.noMatched == 'No') {
+                          Get.to(CarryingAssetsScreen(
+                            countryCode: widget.countryCode,
+                            fullName: widget.fullName,
+                            email: widget.email,
+                            mobNo: widget.mobNo,
+                            purpose: widget.purpose,
+                            meetingFor: nameId,
+                          ));
+                        } else {
+                          Get.to(
+                            MayIKnowYourPurposeScreen(
+                              countryCode: AppController.countryCode,
+                              mobileNumber: AppController.mobile,
+                              meetingFor: nameId,
+                            ),
+                          );
+                        }
+                      }
+                    },
+                    child: const Text(
+                      'Next',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
               Text(
                 AppController.noName != null
                     ? 'Hello ${AppController.noName}! Who are you meeting today?'
                     : 'Great! Who are you meeting today?',
                 style:
-                    const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                    const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 25),
               Padding(

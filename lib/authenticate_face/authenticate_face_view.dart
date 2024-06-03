@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:math' as math;
-
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_face_api/face_api.dart' as regula;
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:secure_access/authenticate_face/scanning_animation/animated_view.dart';
 import 'package:secure_access/authenticate_face/user_details_view.dart';
@@ -17,6 +17,9 @@ import 'package:secure_access/common/views/camera_view.dart';
 import 'package:secure_access/common/views/custom_button.dart';
 import 'package:secure_access/constants/theme.dart';
 import 'package:secure_access/model_face/user_model.dart';
+import 'package:secure_access/register_face/enter_details_view.dart';
+import 'package:secure_access/register_face/register_face_view.dart';
+import 'package:secure_access/utils/toast_notify.dart';
 
 class AuthenticateFaceView extends StatefulWidget {
   const AuthenticateFaceView({Key? key}) : super(key: key);
@@ -36,6 +39,7 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
   FaceFeatures? _faceFeatures;
   var image1 = regula.MatchFacesImage();
   var image2 = regula.MatchFacesImage();
+  dynamic _capturedImage;
 
   final TextEditingController _nameController = TextEditingController();
   String _similarity = "";
@@ -44,7 +48,7 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
   bool userExists = false;
   UserModel? loggingUser;
   bool isMatching = false;
-  int trialNumber = 1;
+  int trialNumber = 4;
 
   @override
   void dispose() {
@@ -72,92 +76,88 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
         title: const Text("Authenticate Face"),
         elevation: 0,
       ),
-      body: LayoutBuilder(
-        builder: (context, constrains) => Stack(
-          children: [
-            Container(
-              width: constrains.maxWidth,
-              height: constrains.maxHeight,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    scaffoldTopGradientClr,
-                    scaffoldBottomGradientClr,
-                  ],
-                ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      height: 0.82.sh,
-                      width: double.infinity,
-                      padding:
-                          EdgeInsets.fromLTRB(0.05.sw, 0.025.sh, 0.05.sw, 0),
-                      decoration: BoxDecoration(
-                        color: overlayContainerClr,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(0.03.sh),
-                          topRight: Radius.circular(0.03.sh),
-                        ),
-                      ),
-                      child: Column(
-                        children: [
-                          Stack(
-                            children: [
-                              CameraView(
-                                onImage: (image) {
-                                  _setImage(image);
-                                },
-                                onInputImage: (inputImage) async {
-                                  setState(() => isMatching = true);
-                                  _faceFeatures = await extractFaceFeatures(
-                                      inputImage, _faceDetector);
-                                  setState(() => isMatching = false);
-                                },
-                              ),
-                              if (isMatching)
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(top: 0.064.sh),
-                                    child: const AnimatedView(),
-                                  ),
-                                ),
-                            ],
-                          ),
-                          const Spacer(),
-                          if (_canAuthenticate)
-                            CustomButton(
-                              text: "Authenticate",
-                              onTap: () {
-                                setState(() => isMatching = true);
-                                _playScanningAudio;
-                                _fetchUsersAndMatchFace();
-                              },
-                            ),
-                          SizedBox(height: 0.038.sh),
-                        ],
+      body: Column(
+        children: [
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    height: 0.82.sh,
+                    width: double.infinity,
+                    padding: EdgeInsets.fromLTRB(0.05.sw, 0.025.sh, 0.05.sw, 0),
+                    decoration: BoxDecoration(
+                      color: overlayContainerClr,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(0.03.sh),
+                        topRight: Radius.circular(0.03.sh),
                       ),
                     ),
-                  ],
-                ),
+                    child: Column(
+                      children: [
+                        Stack(
+                          children: [
+                            CameraView(
+                              onImage: (image) {
+                                _setImage(image);
+                              },
+                              onInputImage: (inputImage) async {
+                                setState(() => isMatching = true);
+                                _faceFeatures = await extractFaceFeatures(
+                                    inputImage, _faceDetector);
+                                setState(() => isMatching = false);
+                              },
+                            ),
+                            if (isMatching)
+                              Align(
+                                alignment: Alignment.center,
+                                child: Padding(
+                                  padding: EdgeInsets.only(top: 0.064.sh),
+                                  child: const AnimatedView(),
+                                ),
+                              ),
+                          ],
+                        ),
+                        const Spacer(),
+                        if (_canAuthenticate && _faceFeatures != null)
+                          FutureBuilder<void>(
+                            future: _fetchUsersAndMatchFace(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const CircularProgressIndicator();
+                              } else if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              } else {
+                                return const SizedBox.shrink();
+                              }
+                            },
+                          ),
+                        if (_canAuthenticate && _faceFeatures == null)
+                          CustomButton(
+                            text: 'Please Take proper Photo',
+                            onTap: () {
+                              Get.offAll(const AuthenticateFaceView());
+                            },
+                          ),
+                        SizedBox(height: 0.038.sh),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            )
-          ],
-        ),
+            ),
+          )
+        ],
       ),
     );
   }
 
   Future _setImage(Uint8List imageToAuthenticate) async {
     image2.bitmap = base64Encode(imageToAuthenticate);
+    _capturedImage = image2.bitmap;
     image2.imageType = regula.ImageType.PRINTED;
 
     setState(() {
@@ -200,20 +200,15 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
     return ratio;
   }
 
-// A function to calculate the Euclidean distance between two points
   double euclideanDistance(Points p1, Points p2) {
     final sqr =
         math.sqrt(math.pow((p1.x! - p2.x!), 2) + math.pow((p1.y! - p2.y!), 2));
     return sqr;
   }
 
-  _fetchUsersAndMatchFace() {
-    FirebaseFirestore.instance.collection("users").get().catchError((e) {
-      log("Getting User Error: $e");
-      setState(() => isMatching = false);
-      _playFailedAudio;
-      CustomSnackBar.errorSnackBar("Something went wrong. Please try again.");
-    }).then((snap) {
+  Future<void> _fetchUsersAndMatchFace() async {
+    try {
+      final snap = await FirebaseFirestore.instance.collection("users").get();
       if (snap.docs.isNotEmpty) {
         users.clear();
         log(snap.docs.length.toString(), name: "Total Registered Users");
@@ -225,31 +220,37 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
           }
         }
         log(users.length.toString(), name: "Filtered Users");
-        setState(() {
-          //Sorts the users based on the similarity.
-          //More similar face is put first.
-          users.sort((a, b) => (((a.last as double) - 1).abs())
-              .compareTo(((b.last as double) - 1).abs()));
-        });
+        // setState(() {
+        //   users.sort((a, b) => (((a.last as double) - 1).abs())
+        //       .compareTo(((b.last as double) - 1).abs()));
+        // });
 
-        _matchFaces();
+        await _matchFaces();
       } else {
-        _showFailureDialog(
-          title: "No Users Registered",
-          description:
-              "Make sure users are registered first before Authenticating.",
-        );
+        // _showFailureDialog(
+        //   title: "No Users Registered",
+        //   description:
+        //       "Make sure users are registered first before Authenticating.",
+        // );
+        Get.offAll(EnterDetailsView(
+          image: _capturedImage,
+          faceFeatures: _faceFeatures,
+        ));
       }
-    });
+    } catch (e) {
+      log("Getting User Error: $e");
+      setState(() => isMatching = false);
+      CustomSnackBar.errorSnackBar("Something went wrong. Please try again.");
+    }
   }
 
-  _matchFaces() async {
-    bool faceMatched = false;
+  Future<void> _matchFaces() async {
+    List<UserModel> matchingUsers = [];
+
     for (List user in users) {
       image1.bitmap = (user.first as UserModel).image;
       image1.imageType = regula.ImageType.PRINTED;
 
-      //Face comparing logic.
       var request = regula.MatchFacesRequest();
       request.images = [image1, image2];
       dynamic value = await regula.FaceSDK.matchFaces(jsonEncode(request));
@@ -260,125 +261,129 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
 
       var split =
           regula.MatchFacesSimilarityThresholdSplit.fromJson(json.decode(str));
-      setState(() {
-        _similarity = split!.matchedFaces.isNotEmpty
-            ? (split.matchedFaces[0]!.similarity! * 100).toStringAsFixed(2)
-            : "error";
-        log("similarity: $_similarity");
 
-        if (_similarity != "error" && double.parse(_similarity) > 90.00) {
-          faceMatched = true;
-          loggingUser = user.first;
-        } else {
-          faceMatched = false;
-        }
-      });
-      if (faceMatched) {
-        _audioPlayer
-          ..stop()
-          ..setReleaseMode(ReleaseMode.release)
-          ..play(AssetSource("success.mp3"));
+      double similarity = split!.matchedFaces.isNotEmpty
+          ? (split.matchedFaces[0]!.similarity! * 100)
+          : 0;
 
-        setState(() {
-          trialNumber = 1;
-          isMatching = false;
-        });
-
-        if (mounted) {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => UserDetailsView(user: loggingUser!),
-            ),
-          );
-        }
-        break;
+      if (similarity > 90.00) {
+        matchingUsers.add(user.first);
       }
     }
-    if (!faceMatched) {
-      if (trialNumber == 4) {
-        setState(() => trialNumber = 1);
-        _showFailureDialog(
-          title: "Redeem Failed",
-          description: "Face doesn't match. Please try again.",
+
+    // Update state based on matching results
+    if (matchingUsers.isNotEmpty) {
+      // setState(() {
+      //   loggingUser = matchingUsers.first;
+      //   isMatching = false;
+      //   trialNumber = 1;
+      // });
+
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => UserDetailsView(user: matchingUsers.first!),
+        ),
+      );
+    } else {
+      // Handle no match case
+      if (trialNumber == 3) {
+        //it was 4
+        // setState(() => trialNumber = 1);
+        // Get.offAll(EnterDetailsView(
+        //   image: _capturedImage,
+        //   faceFeatures: _faceFeatures,
+        // ));
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => EnterDetailsView(
+              image: _capturedImage,
+              faceFeatures: _faceFeatures,
+            ),
+          ),
         );
-      } else if (trialNumber == 3) {
-        //After 2 trials if the face doesn't match automatically, the registered name prompt
-        //will be shown. After entering the name the face registered with the entered name will
-        //be fetched and will try to match it with the to be authenticated face.
-        //If the faces match, Viola!. Else it means the user is not registered yet.
-        _audioPlayer.stop();
-        setState(() {
-          isMatching = false;
-          trialNumber++;
-        });
-        showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: const Text("Enter Name"),
-                content: TextFormField(
-                  controller: _nameController,
-                  cursorColor: accentColor,
-                  decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        width: 2,
-                        color: accentColor,
-                      ),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        width: 2,
-                        color: accentColor,
-                      ),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ),
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      if (_nameController.text.trim().isEmpty) {
-                        CustomSnackBar.errorSnackBar("Enter a name to proceed");
-                      } else {
-                        Navigator.of(context).pop();
-                        setState(() => isMatching = true);
-                        _playScanningAudio;
-                        _fetchUserByName(_nameController.text.trim());
-                      }
-                    },
-                    child: const Text(
-                      "Done",
-                      style: TextStyle(
-                        color: accentColor,
-                      ),
-                    ),
-                  )
-                ],
-              );
-            });
+      } else if (trialNumber == 4) {
+        //it was 3
+        // _audioPlayer.stop();
+        // setState(() {
+        //   isMatching = false;
+        //   trialNumber++;
+        // });
+        // showDialog(
+        //     context: context,
+        //     builder: (context) {
+        //       return AlertDialog(
+        //         title: const Text("Enter Name"),
+        //         content: TextFormField(
+        //           controller: _nameController,
+        //           cursorColor: accentColor,
+        //           decoration: InputDecoration(
+        //             enabledBorder: OutlineInputBorder(
+        //               borderSide: const BorderSide(
+        //                 width: 2,
+        //                 color: accentColor,
+        //               ),
+        //               borderRadius: BorderRadius.circular(4),
+        //             ),
+        //             focusedBorder: OutlineInputBorder(
+        //               borderSide: const BorderSide(
+        //                 width: 2,
+        //                 color: accentColor,
+        //               ),
+        //               borderRadius: BorderRadius.circular(4),
+        //             ),
+        //           ),
+        //         ),
+        //         actions: [
+        //           TextButton(
+        //             onPressed: () {
+        //               if (_nameController.text.trim().isEmpty) {
+        //                 CustomSnackBar.errorSnackBar("Enter a name to proceed");
+        //               } else {
+        //                 Navigator.of(context).pop();
+        //                 setState(() => isMatching = true);
+        //                 _playScanningAudio;
+        //                 _fetchUserByName(_nameController.text.trim());
+        //               }
+        //             },
+        //             child: const Text(
+        //               "Done",
+        //               style: TextStyle(
+        //                 color: accentColor,
+        //               ),
+        //             ),
+        //           )
+        //         ],
+        //       );
+        //     });
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => EnterDetailsView(
+              image: _capturedImage,
+              faceFeatures: _faceFeatures,
+            ),
+          ),
+        );
       } else {
-        setState(() => trialNumber++);
-        _showFailureDialog(
-          title: "Redeem Failed",
-          description: "Face doesn't match. Please try again.",
+        // setState(() => trialNumber++);
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => EnterDetailsView(
+              image: _capturedImage,
+              faceFeatures: _faceFeatures,
+            ),
+          ),
         );
       }
     }
   }
 
-  _fetchUserByName(String orgID) {
-    FirebaseFirestore.instance
-        .collection("users")
-        .where("organizationId", isEqualTo: orgID)
-        .get()
-        .catchError((e) {
-      log("Getting User Error: $e");
-      setState(() => isMatching = false);
-      _playFailedAudio;
-      CustomSnackBar.errorSnackBar("Something went wrong. Please try again.");
-    }).then((snap) {
+  Future<void> _fetchUserByName(String orgID) async {
+    try {
+      final snap = await FirebaseFirestore.instance
+          .collection("users")
+          .where("organizationId", isEqualTo: orgID)
+          .get();
+
       if (snap.docs.isNotEmpty) {
         users.clear();
         for (var doc in snap.docs) {
@@ -386,7 +391,7 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
             users.add([UserModel.fromJson(doc.data()), 1]);
           });
         }
-        _matchFaces();
+        await _matchFaces();
       } else {
         setState(() => trialNumber = 1);
         _showFailureDialog(
@@ -395,7 +400,12 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
               "User is not registered yet. Register first to authenticate.",
         );
       }
-    });
+    } catch (e) {
+      log("Getting User Error: $e");
+      setState(() => isMatching = false);
+      _playFailedAudio;
+      CustomSnackBar.errorSnackBar("Something went wrong. Please try again.");
+    }
   }
 
   _showFailureDialog({
