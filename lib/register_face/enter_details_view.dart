@@ -67,7 +67,6 @@ class _EnterDetailsViewState extends State<EnterDetailsView> {
                   onTap: () {
                     if (_formFieldKey.currentState!.validate()) {
                       FocusScope.of(context).unfocus();
-
                       showDialog(
                         context: context,
                         barrierDismissible: false,
@@ -77,7 +76,6 @@ class _EnterDetailsViewState extends State<EnterDetailsView> {
                           ),
                         ),
                       );
-
                       String userId = Uuid().v1();
                       UserModel user = UserModel(
                         id: userId,

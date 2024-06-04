@@ -27,8 +27,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      // home: LoginPage(), // for tab working
-      home: const MLStartScreen(),
+      home: LoginPage(), // for tab working
+      // home: const MLStartScreen(),
       // home: const ThankyouFinalScreen(),
       // home: const FirstTabScreen(),
     );

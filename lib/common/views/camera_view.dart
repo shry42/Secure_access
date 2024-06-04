@@ -117,7 +117,10 @@ class _CameraViewState extends State<CameraView> {
               ),
             ],
           )
-        : const Center(child: CircularProgressIndicator());
+        : const Center(
+            child: CircularProgressIndicator(
+            color: Colors.lightGreenAccent,
+          ));
   }
 
   Future<void> _startImageCaptureTimer() async {

@@ -5,11 +5,14 @@ import 'package:get/get.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:secure_access/controllers/app_controller.dart';
 import 'package:secure_access/controllers/user_by_number_controller.dart';
+import 'package:secure_access/model_face/user_model.dart';
 import 'package:secure_access/screens/may_i_know_purpose_screen.dart';
 import 'package:secure_access/screens/whom_meeting_today_screen.dart';
 
 class ProvidePhoneNumberScreen extends StatefulWidget {
-  const ProvidePhoneNumberScreen({super.key});
+  const ProvidePhoneNumberScreen({super.key, this.image, this.faceFeatures});
+  final String? image;
+  final FaceFeatures? faceFeatures;
 
   @override
   State<ProvidePhoneNumberScreen> createState() =>
@@ -85,6 +88,8 @@ class _ProvidePhoneNumberScreenState extends State<ProvidePhoneNumberScreen> {
                             Get.to(MayIKnowYourPurposeScreen(
                               countryCode: selectedCountryCode,
                               mobileNumber: _phoneController.text,
+                              image: widget.image ?? '',
+                              faceFeatures: widget.faceFeatures,
                             ));
                           } else {
                             Get.to(const WhomMeetingTodayScreen());

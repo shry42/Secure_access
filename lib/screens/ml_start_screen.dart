@@ -44,7 +44,6 @@ class MLStartScreen extends StatelessWidget {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) =>
-
                         // EnterPasswordView(),
                         const RegisterFaceView(),
                   ),

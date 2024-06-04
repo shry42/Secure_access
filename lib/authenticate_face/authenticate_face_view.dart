@@ -6,8 +6,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_face_api/face_api.dart' as regula;
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:secure_access/authenticate_face/scanning_animation/animated_view.dart';
 import 'package:secure_access/authenticate_face/user_details_view.dart';
 import 'package:secure_access/common/utils/custom_snackbar.dart';
@@ -20,6 +22,8 @@ import 'package:secure_access/constants/theme.dart';
 import 'package:secure_access/model_face/user_model.dart';
 import 'package:secure_access/register_face/enter_details_view.dart';
 import 'package:secure_access/register_face/register_face_view.dart';
+import 'package:secure_access/screens/identified_image.dart';
+import 'package:secure_access/screens/provide_phone_number_screen.dart';
 import 'package:secure_access/utils/toast_notify.dart';
 
 class AuthenticateFaceView extends StatefulWidget {
@@ -41,6 +45,7 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
   var image1 = regula.MatchFacesImage();
   var image2 = regula.MatchFacesImage();
   dynamic _capturedImage;
+  dynamic _capturedDispImg;
 
   final TextEditingController _nameController = TextEditingController();
   String _similarity = "";
@@ -50,6 +55,13 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
   UserModel? loggingUser;
   bool isMatching = false;
   int trialNumber = 4;
+
+  void restartCamera() {
+    setState(() {
+      _faceFeatures = null;
+      isMatching = false;
+    });
+  }
 
   @override
   void dispose() {
@@ -72,86 +84,106 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
     initializeUtilContexts(context);
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: appBarColor,
-        title: const Text("Authenticate Face"),
-        elevation: 0,
-      ),
+      // appBar: AppBar(
+      //   centerTitle: true,
+      //   backgroundColor: appBarColor,
+      //   title: const Text("Authenticate Face"),
+      //   elevation: 0,
+      // ),
       body: Column(
         children: [
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                    height: 0.82.sh,
-                    width: double.infinity,
-                    padding: EdgeInsets.fromLTRB(0.05.sw, 0.025.sh, 0.05.sw, 0),
-                    decoration: BoxDecoration(
-                      color: overlayContainerClr,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(0.03.sh),
-                        topRight: Radius.circular(0.03.sh),
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        Stack(
-                          children: [
-                            CameraView(
-                              onImage: (image) {
-                                _setImage(image);
-                              },
-                              onInputImage: (inputImage) async {
-                                setState(() => isMatching = true);
-                                _faceFeatures = await extractFaceFeatures(
-                                    inputImage, _faceDetector);
-                                setState(() => isMatching = false);
-                              },
-                            ),
-                            if (isMatching)
-                              Align(
-                                alignment: Alignment.center,
-                                child: Padding(
-                                  padding: EdgeInsets.only(top: 0.064.sh),
-                                  child: const AnimatedView(),
-                                ),
-                              ),
-                          ],
-                        ),
-                        const Spacer(),
-                        if (_canAuthenticate && _faceFeatures != null)
-                          FutureBuilder<void>(
-                            future: _fetchUsersAndMatchFace(),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const CircularProgressIndicator();
-                              } else if (snapshot.hasError) {
-                                return Text('Error: ${snapshot.error}');
-                              } else {
-                                return const SizedBox.shrink();
-                              }
-                            },
-                          ),
-                        if (_canAuthenticate && _faceFeatures == null)
-                          CustomButton(
-                            text: 'Please Take proper Photo',
-                            onTap: () {
-                              Get.offAll(const AuthenticateFaceView());
-                            },
-                          ),
-                        SizedBox(height: 0.038.sh),
-                      ],
+          Expanded(
+            child: Stack(
+              children: [
+                CameraView(
+                  onImage: (image) {
+                    _setImage(image);
+                  },
+                  onInputImage: (inputImage) async {
+                    setState(() => isMatching = true);
+                    _faceFeatures =
+                        await extractFaceFeatures(inputImage, _faceDetector);
+                    setState(() => isMatching = false);
+                  },
+                ),
+                // if (isMatching)
+                //   const Align(
+                //     alignment: Alignment.center,
+                //     child: AnimatedView(),
+                //   ),
+                //
+                if (_canAuthenticate && _faceFeatures == null)
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: CustomButton(
+                      text: 'Please Take proper Photo',
+                      onTap: () {
+                        // setState(() {});
+                        _canAuthenticate = false;
+
+                        Get.to(() => const AuthenticateFaceView());
+                      },
                     ),
                   ),
-                ],
-              ),
+
+                //
+
+                if (_canAuthenticate && _faceFeatures != null)
+                  FutureBuilder<void>(
+                    future: _fetchUsersAndMatchFace(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: LoadingAnimationWidget.hexagonDots(
+                            color: Colors.lightGreen,
+                            size: 120,
+                          ),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        return const SizedBox.shrink();
+                      }
+                    },
+                  ),
+              ],
             ),
-          )
+          ),
+          // Container(
+          //   width: double.infinity,
+          //   padding: EdgeInsets.symmetric(horizontal: 0.05.sw),
+          //   decoration: BoxDecoration(
+          //     color: overlayContainerClr,
+          //     borderRadius: BorderRadius.only(
+          //       topLeft: Radius.circular(0.03.sh),
+          //       topRight: Radius.circular(0.03.sh),
+          //     ),
+          //   ),
+          //   child: Column(
+          //     mainAxisSize: MainAxisSize.min,
+          //     children: [
+          //       if (_canAuthenticate && _faceFeatures != null)
+          //         FutureBuilder<void>(
+          //           future: _fetchUsersAndMatchFace(),
+          //           builder: (context, snapshot) {
+          //             if (snapshot.connectionState == ConnectionState.waiting) {
+          //               return const CircularProgressIndicator();
+          //             } else if (snapshot.hasError) {
+          //               return Text('Error: ${snapshot.error}');
+          //             } else {
+          //               return const SizedBox.shrink();
+          //             }
+          //           },
+          //         ),
+          //       // if (_canAuthenticate && _faceFeatures == null)
+          //       //   CustomButton(
+          //       //     text: 'Please Take proper Photo',
+          //       //     onTap: () {},
+          //       //   ),
+          //       SizedBox(height: 0.038.sh),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );
@@ -159,6 +191,7 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
 
   Future _setImage(Uint8List imageToAuthenticate) async {
     image2.bitmap = base64Encode(imageToAuthenticate);
+    _capturedDispImg = image2.bitmap;
     _capturedImage = image2.bitmap;
     image2.imageType = regula.ImageType.PRINTED;
 
@@ -234,10 +267,15 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
         //   description:
         //       "Make sure users are registered first before Authenticating.",
         // );
-        Get.offAll(EnterDetailsView(
-          image: _capturedImage,
-          faceFeatures: _faceFeatures,
-        ));
+        // Get.offAll(EnterDetailsView(
+        //   image: _capturedImage,
+        //   faceFeatures: _faceFeatures,
+        // ));
+
+        Get.offAll(() => ProvidePhoneNumberScreen(
+              image: _capturedImage,
+              faceFeatures: _faceFeatures,
+            ));
       }
     } catch (e) {
       log("Getting User Error: $e");
@@ -282,8 +320,16 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
       // });
 
       Navigator.of(context).push(
+        // MaterialPageRoute(
+        //   builder: (context) => UserDetailsView(user: matchingUsers.first!),
+        // ),
+
+        //For tab screen
         MaterialPageRoute(
-          builder: (context) => UserDetailsView(user: matchingUsers.first!),
+          builder: (context) => IdentifiedImageScreen(
+            user: matchingUsers.first!,
+            dispImg: _capturedDispImg,
+          ),
         ),
       );
     } else {
@@ -295,14 +341,19 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
         //   image: _capturedImage,
         //   faceFeatures: _faceFeatures,
         // ));
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => EnterDetailsView(
-              image: _capturedImage!,
-              faceFeatures: _faceFeatures!,
-            ),
-          ),
-        );
+
+        // Navigator.of(context).push(
+        //   MaterialPageRoute(
+        //     builder: (context) => EnterDetailsView(
+        //       image: _capturedImage!,
+        //       faceFeatures: _faceFeatures!,
+        //     ),
+        //   ), );
+
+        Get.offAll(() => ProvidePhoneNumberScreen(
+              image: _capturedImage,
+              faceFeatures: _faceFeatures,
+            ));
       } else if (trialNumber == 4) {
         //it was 3
         // _audioPlayer.stop();
@@ -357,88 +408,100 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
         //         ],
         //       );
         //     });
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => EnterDetailsView(
-              image: _capturedImage!,
-              faceFeatures: _faceFeatures!,
-            ),
-          ),
-        );
+
+        // Navigator.of(context).push(
+        //   MaterialPageRoute(
+        //     builder: (context) => EnterDetailsView(
+        //       image: _capturedImage!,
+        //       faceFeatures: _faceFeatures!,
+        //     ),
+        //   ),
+        // );
+
+        Get.offAll(() => ProvidePhoneNumberScreen(
+              image: _capturedImage,
+              faceFeatures: _faceFeatures,
+            ));
       } else {
         // setState(() => trialNumber++);
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => EnterDetailsView(
-              image: _capturedImage!,
-              faceFeatures: _faceFeatures!,
-            ),
-          ),
-        );
+
+        // Navigator.of(context).push(
+        //   MaterialPageRoute(
+        //     builder: (context) => EnterDetailsView(
+        //       image: _capturedImage!,
+        //       faceFeatures: _faceFeatures!,
+        //     ),
+        //   ),
+        // );
+
+        Get.offAll(() => ProvidePhoneNumberScreen(
+              image: _capturedImage,
+              faceFeatures: _faceFeatures,
+            ));
       }
     }
   }
 
-  Future<void> _fetchUserByName(String orgID) async {
-    try {
-      final snap = await FirebaseFirestore.instance
-          .collection("users")
-          .where("organizationId", isEqualTo: orgID)
-          .get();
+  // Future<void> _fetchUserByName(String orgID) async {
+  //   try {
+  //     final snap = await FirebaseFirestore.instance
+  //         .collection("users")
+  //         .where("organizationId", isEqualTo: orgID)
+  //         .get();
 
-      if (snap.docs.isNotEmpty) {
-        users.clear();
-        for (var doc in snap.docs) {
-          setState(() {
-            users.add([UserModel.fromJson(doc.data()), 1]);
-          });
-        }
-        await _matchFaces();
-      } else {
-        setState(() => trialNumber = 1);
-        _showFailureDialog(
-          title: "User Not Found",
-          description:
-              "User is not registered yet. Register first to authenticate.",
-        );
-      }
-    } catch (e) {
-      log("Getting User Error: $e");
-      setState(() => isMatching = false);
-      _playFailedAudio;
-      CustomSnackBar.errorSnackBar("Something went wrong. Please try again.");
-    }
-  }
+  //     if (snap.docs.isNotEmpty) {
+  //       users.clear();
+  //       for (var doc in snap.docs) {
+  //         setState(() {
+  //           users.add([UserModel.fromJson(doc.data()), 1]);
+  //         });
+  //       }
+  //       await _matchFaces();
+  //     } else {
+  //       setState(() => trialNumber = 1);
+  //       _showFailureDialog(
+  //         title: "User Not Found",
+  //         description:
+  //             "User is not registered yet. Register first to authenticate.",
+  //       );
+  //     }
+  //   } catch (e) {
+  //     log("Getting User Error: $e");
+  //     setState(() => isMatching = false);
+  //     _playFailedAudio;
+  //     CustomSnackBar.errorSnackBar("Something went wrong. Please try again.");
+  //   }
+  // }
 
-  _showFailureDialog({
-    required String title,
-    required String description,
-  }) {
-    _playFailedAudio;
-    setState(() => isMatching = false);
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(description),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text(
-                "Ok",
-                style: TextStyle(
-                  color: accentColor,
-                ),
-              ),
-            )
-          ],
-        );
-      },
-    );
-  }
+  // _showFailureDialog({
+  //   required String title,
+  //   required String description,
+  // }) {
+  //   _playFailedAudio;
+  //   setState(() => isMatching = false);
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) {
+  //       return AlertDialog(
+  //         title: Text(title),
+  //         content: Text(description),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //             },
+  //             child: const Text(
+  //               "Ok",
+  //               style: TextStyle(
+  //                 color: accentColor,
+  //               ),
+  //             ),
+  //           )
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
   void initializeUtilContexts(BuildContext context) {
     ScreenSizeUtil.context = context;

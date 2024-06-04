@@ -1,16 +1,29 @@
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:secure_access/common/utils/custom_snackbar.dart';
 import 'package:secure_access/controllers/app_controller.dart';
+import 'package:secure_access/model_face/user_model.dart';
 import 'package:secure_access/screens/whom_meeting_today_screen.dart';
+import 'package:uuid/uuid.dart';
 
 class FirstVisitScreen extends StatefulWidget {
   const FirstVisitScreen(
-      {super.key, this.countryCode, this.mobNo, this.purpose});
+      {super.key,
+      this.countryCode,
+      this.mobNo,
+      this.purpose,
+      this.image,
+      this.faceFeatures});
 
   final String? countryCode;
   final String? mobNo;
   final String? purpose;
+  final String? image;
+  final FaceFeatures? faceFeatures;
 
   @override
   State<FirstVisitScreen> createState() => _FirstVisitScreenState();
@@ -57,15 +70,55 @@ class _FirstVisitScreenState extends State<FirstVisitScreen> {
                       onPressed: () {
                         // Get.to(const MayIKnowYourPurposeScreen());
                         if (_formKey.currentState!.validate()) {
-                          Get.to(
-                            WhomMeetingTodayScreen(
-                              countryCode: widget.countryCode,
-                              mobNo: widget.mobNo,
-                              purpose: widget.purpose,
-                              fullName: fullNameController.text,
-                              email: emailController.text,
-                            ),
+                          //
+                          String userId = Uuid().v1();
+                          UserModel user = UserModel(
+                            id: userId,
+                            name: fullNameController.text,
+                            image: widget.image,
+                            registeredOn: DateTime.now().millisecondsSinceEpoch,
+                            faceFeatures: widget.faceFeatures,
                           );
+                          FirebaseFirestore.instance
+                              .collection("users")
+                              .doc(userId)
+                              .set(user.toJson())
+                              .catchError((e) {
+                            // log("Registration Error: $e");
+                            // Navigator.of(context).pop();
+                            // CustomSnackBar.errorSnackBar(
+                            //     "Registration Failed! Try Again.");
+                          }).whenComplete(() {
+                            // Navigator.of(context).pop();
+                            // CustomSnackBar.successSnackBar(
+                            //     "Registration Success!");
+                            Future.delayed(const Duration(seconds: 1), () {
+                              //Reaches HomePage
+                              // Navigator.of(context)
+                              //   ..pop()
+                              //   ..pop()
+                              //   ..pop();
+                              Get.to(
+                                WhomMeetingTodayScreen(
+                                  countryCode: widget.countryCode,
+                                  mobNo: widget.mobNo,
+                                  purpose: widget.purpose,
+                                  fullName: fullNameController.text,
+                                  email: emailController.text,
+                                ),
+                              );
+                            });
+                          });
+                          //
+                          // Get.to(
+                          //   WhomMeetingTodayScreen(
+                          //     countryCode: widget.countryCode,
+                          //     mobNo: widget.mobNo,
+                          //     purpose: widget.purpose,
+                          //     fullName: fullNameController.text,
+                          //     email: emailController.text,
+                          //   ),
+                          // );
                         }
                       },
                       child: const Text('Next'),

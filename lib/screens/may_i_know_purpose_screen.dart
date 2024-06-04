@@ -3,16 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:secure_access/controllers/app_controller.dart';
+import 'package:secure_access/model_face/user_model.dart';
 import 'package:secure_access/screens/carrying_asset_screen.dart';
 import 'package:secure_access/screens/first_visit_screen.dart';
 
 class MayIKnowYourPurposeScreen extends StatefulWidget {
   const MayIKnowYourPurposeScreen(
-      {super.key, this.countryCode, this.mobileNumber, this.meetingFor});
+      {super.key,
+      this.countryCode,
+      this.mobileNumber,
+      this.meetingFor,
+      this.image,
+      this.faceFeatures});
 
   final String? countryCode;
   final String? mobileNumber;
   final int? meetingFor;
+  final String? image;
+  final FaceFeatures? faceFeatures;
 
   @override
   State<MayIKnowYourPurposeScreen> createState() =>
@@ -72,6 +80,8 @@ class _MayIKnowYourPurposeScreenState extends State<MayIKnowYourPurposeScreen> {
                         countryCode: widget.countryCode,
                         mobNo: widget.mobileNumber,
                         purpose: 'vendor',
+                        image: widget.image ?? '',
+                        faceFeatures: widget.faceFeatures,
                       ));
                     } else {
                       Get.to(
@@ -117,6 +127,8 @@ class _MayIKnowYourPurposeScreenState extends State<MayIKnowYourPurposeScreen> {
                         countryCode: widget.countryCode,
                         mobNo: widget.mobileNumber,
                         purpose: 'interview',
+                        image: widget.image ?? '',
+                        faceFeatures: widget.faceFeatures,
                       ));
                     } else {
                       Get.to(CarryingAssetsScreen(
@@ -160,6 +172,8 @@ class _MayIKnowYourPurposeScreenState extends State<MayIKnowYourPurposeScreen> {
                         countryCode: widget.countryCode,
                         mobNo: widget.mobileNumber,
                         purpose: 'client/consultant',
+                        image: widget.image ?? '',
+                        faceFeatures: widget.faceFeatures,
                       ));
                     } else {
                       Get.to(CarryingAssetsScreen(
@@ -203,6 +217,8 @@ class _MayIKnowYourPurposeScreenState extends State<MayIKnowYourPurposeScreen> {
                         countryCode: widget.countryCode,
                         mobNo: widget.mobileNumber,
                         purpose: 'contract_employees',
+                        image: widget.image ?? '',
+                        faceFeatures: widget.faceFeatures,
                       ));
                     } else {
                       Get.to(CarryingAssetsScreen(
@@ -246,6 +262,8 @@ class _MayIKnowYourPurposeScreenState extends State<MayIKnowYourPurposeScreen> {
                         countryCode: widget.countryCode,
                         mobNo: widget.mobileNumber,
                         purpose: 'others',
+                        image: widget.image ?? '',
+                        faceFeatures: widget.faceFeatures,
                       ));
                     } else {
                       Get.to(CarryingAssetsScreen(

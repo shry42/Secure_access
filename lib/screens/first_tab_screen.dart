@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:secure_access/authenticate_face/authenticate_face_view.dart';
+import 'package:secure_access/common/utils/custom_snackbar.dart';
+import 'package:secure_access/common/utils/screen_size_util.dart';
 import 'package:secure_access/screens/capture_image_screen.dart';
 import 'package:secure_access/screens/thankyou_final_screen.dart';
 
@@ -13,6 +16,7 @@ class FirstTabScreen extends StatefulWidget {
 class _FirstTabScreenState extends State<FirstTabScreen> {
   @override
   Widget build(BuildContext context) {
+    initializeUtilContexts(context);
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -189,8 +193,13 @@ class _FirstTabScreenState extends State<FirstTabScreen> {
                   backgroundColor: Colors.white,
                 ),
                 onPressed: () {
-                  Get.to(const CaptureImageScreen());
+                  // Get.to(const CaptureImageScreen());
                   // Get.to(const ThankyouFinalScreen());
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const AuthenticateFaceView(),
+                    ),
+                  );
                 },
                 child: const Text(
                   'Tap to Check In',
@@ -203,5 +212,10 @@ class _FirstTabScreenState extends State<FirstTabScreen> {
         ],
       ),
     );
+  }
+
+  void initializeUtilContexts(BuildContext context) {
+    ScreenSizeUtil.context = context;
+    CustomSnackBar.context = context;
   }
 }
