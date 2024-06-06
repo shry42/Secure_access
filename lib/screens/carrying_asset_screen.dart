@@ -19,9 +19,10 @@ class CarryingAssetsScreen extends StatefulWidget {
       this.email,
       this.purpose,
       this.mobNo,
-      this.meetingFor});
+      this.meetingFor,
+      this.firebaseKey});
 
-  final String? countryCode, fullName, email, purpose, mobNo;
+  final String? countryCode, fullName, email, purpose, mobNo, firebaseKey;
   final int? meetingFor;
 
   @override
@@ -37,8 +38,8 @@ class _CarryingAssetsScreenState extends State<CarryingAssetsScreen> {
 
   bool isYes = false;
 
-  late String currentTime;
-  late String currentDate;
+  // late String currentTime;
+  // late String currentDate;
   late String selectedCountryCode;
 
   final String? toolName = '';
@@ -114,6 +115,7 @@ class _CarryingAssetsScreenState extends State<CarryingAssetsScreen> {
                           toolName: toolNameController.text,
                           make: makeController.text,
                           remark: remarkController.text,
+                          firebaseKey: widget.firebaseKey,
                           quantity: int.parse(quantityController.text),
                           base64ToolImage: base64ImageTool,
                         ),
@@ -188,6 +190,7 @@ class _CarryingAssetsScreenState extends State<CarryingAssetsScreen> {
                             purpose: widget.purpose,
                             meetingFor: widget.meetingFor,
                             hasTool: hasTool,
+                            firebaseKey: widget.firebaseKey,
                             // toolName: toolNameController.text,
                             // make: makeController.text,
                             // remark: remarkController.text,

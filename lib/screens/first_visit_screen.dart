@@ -1,5 +1,5 @@
+import 'dart:convert';
 import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -33,9 +33,24 @@ class _FirstVisitScreenState extends State<FirstVisitScreen> {
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  Uint8List? bytes;
+  late String currentTime;
+  late String currentDate;
 
   @override
   void initState() {
+    String base64String =
+        widget.image.toString(); // Replace with your base64 string
+    bytes = base64Decode(base64String);
+    // Get the current date
+    DateTime now = DateTime.now();
+    currentDate =
+        "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+
+    // Get the current time in 24-hour format
+    currentTime =
+        "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
+
     super.initState();
   }
 
@@ -76,7 +91,7 @@ class _FirstVisitScreenState extends State<FirstVisitScreen> {
                             id: userId,
                             name: fullNameController.text,
                             image: widget.image,
-                            registeredOn: DateTime.now().millisecondsSinceEpoch,
+                            registeredOn: '$currentDate $currentTime',
                             faceFeatures: widget.faceFeatures,
                           );
                           FirebaseFirestore.instance
@@ -105,6 +120,7 @@ class _FirstVisitScreenState extends State<FirstVisitScreen> {
                                   purpose: widget.purpose,
                                   fullName: fullNameController.text,
                                   email: emailController.text,
+                                  firebaseKey: userId,
                                 ),
                               );
                             });
@@ -148,10 +164,12 @@ class _FirstVisitScreenState extends State<FirstVisitScreen> {
                       ),
                     ),
                     const SizedBox(width: 10),
-                    const CircleAvatar(
+                    CircleAvatar(
                       // child: Image.asset(''),
+                      backgroundImage:
+                          bytes != null ? MemoryImage(bytes!) : null,
                       radius: 20,
-                      backgroundColor: Color.fromARGB(255, 224, 219, 219),
+                      backgroundColor: const Color.fromARGB(255, 224, 219, 219),
                     )
                   ],
                 ),
@@ -173,10 +191,10 @@ class _FirstVisitScreenState extends State<FirstVisitScreen> {
                     labelText: '    Full Name',
                     // hintText: 'username',
                   ),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.deny(
-                        RegExp(r'\s')), // no spaces allowed
-                  ],
+                  // inputFormatters: [
+                  //   FilteringTextInputFormatter.deny(
+                  //       RegExp(r'\s')), // no spaces allowed
+                  // ],
                   validator: (value) {
                     if (value!.isEmpty) {
                       return "Please enter a name";

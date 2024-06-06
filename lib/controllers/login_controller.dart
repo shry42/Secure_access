@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:secure_access/controllers/app_controller.dart';
 import 'package:secure_access/models/login_user_model.dart';
 import 'package:secure_access/services/api_services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class loginController extends GetxController {
   RxString email = ''.obs;
@@ -34,18 +35,6 @@ class loginController extends GetxController {
       Map<String, dynamic> result = json.decode(response.body);
       //
       user = UserDetails.fromJson(result['userDetails']);
-
-      //
-      // List<dynamic> dataDept = result['departmentDetails'];
-      // deptList =
-      //     dataDept.map((e) => HRLoginDeptDetListModel.fromJson(e)).toList();
-
-      // AppController.setdepName(deptList[0].name);
-      // AppController.setdepId(deptList[0].id);
-      // AppController.setdepVerified(deptList[0].verified);
-      // AppController.setdepActive(deptList[0].active);
-
-      //
       AppController.setmessage(null);
       token = result['token'];
       int? mainUid = user!.id;
@@ -61,6 +50,9 @@ class loginController extends GetxController {
       AppController.setRole(roles);
       // print('******$token');
       AppController.setaccessToken(token);
+      // Store token in SharedPreferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', token);
     }
   }
 }

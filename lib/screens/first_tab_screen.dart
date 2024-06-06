@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:secure_access/authenticate_face/authenticate_face_view.dart';
 import 'package:secure_access/common/utils/custom_snackbar.dart';
 import 'package:secure_access/common/utils/screen_size_util.dart';
 import 'package:secure_access/screens/capture_image_screen.dart';
+import 'package:secure_access/screens/checkout_authenticate.dart';
+import 'package:secure_access/screens/checkout_screen.dart';
 import 'package:secure_access/screens/thankyou_final_screen.dart';
 
 class FirstTabScreen extends StatefulWidget {
@@ -73,8 +76,8 @@ class _FirstTabScreenState extends State<FirstTabScreen> {
               ],
             ),
           ),
-          SizedBox(height: 18),
-          Row(
+          const SizedBox(height: 18),
+          const Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SizedBox(
@@ -93,8 +96,8 @@ class _FirstTabScreenState extends State<FirstTabScreen> {
               ),
             ],
           ),
-          SizedBox(height: 10),
-          Row(
+          const SizedBox(height: 10),
+          const Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SizedBox(
@@ -106,8 +109,8 @@ class _FirstTabScreenState extends State<FirstTabScreen> {
               ),
             ],
           ),
-          SizedBox(height: 7),
-          Row(
+          const SizedBox(height: 7),
+          const Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SizedBox(
@@ -119,8 +122,8 @@ class _FirstTabScreenState extends State<FirstTabScreen> {
               ),
             ],
           ),
-          SizedBox(height: 10),
-          Row(
+          const SizedBox(height: 10),
+          const Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SizedBox(
@@ -139,8 +142,8 @@ class _FirstTabScreenState extends State<FirstTabScreen> {
               ),
             ],
           ),
-          SizedBox(height: 12),
-          Row(
+          const SizedBox(height: 12),
+          const Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SizedBox(
@@ -152,38 +155,43 @@ class _FirstTabScreenState extends State<FirstTabScreen> {
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 210,
           ),
           Stack(children: [
             Container(
               height: 80,
+              color: Colors.green,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.logout,
                         color: Colors.white,
                         size: 20,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 5,
                       ),
-                      Text(
-                        'Checkout',
-                        style: TextStyle(color: Colors.white, fontSize: 15),
+                      GestureDetector(
+                        onTap: () {
+                          Get.to(const AuthenticateCheckoutView());
+                        },
+                        child: const Text(
+                          'Checkout',
+                          style: TextStyle(color: Colors.white, fontSize: 15),
+                        ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 15,
                       ),
                     ],
                   )
                 ],
               ),
-              color: Colors.green,
             ),
             Positioned(
               bottom: 50,

@@ -20,8 +20,10 @@ class AppController {
   static String? _noName;
   static String? _whomToMeetName;
   static String? _countryCode;
-
+  static String? _firebaseKey;
+  static int? _visitorId;
   static int? _verification;
+  static int? _visitorInviteStatus;
 
   static get verification => _verification;
   static setVerification(value) {
@@ -32,6 +34,21 @@ class AppController {
   static get depName => _depName;
   static setdepName(value) {
     _depName = value;
+  }
+
+  static get visitorId => _visitorId;
+  static setVisitorId(value) {
+    _visitorId = value;
+  }
+
+  static get visitorInviteStatus => _visitorInviteStatus;
+  static setVisitorInviteStatus(value) {
+    _visitorInviteStatus = value;
+  }
+
+  static get firebaseKey => _firebaseKey;
+  static setFirebaseKey(value) {
+    _firebaseKey = value;
   }
 
   static get depId => _depId;

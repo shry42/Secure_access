@@ -6,12 +6,18 @@ import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:secure_access/controllers/app_controller.dart';
 import 'package:secure_access/controllers/user_by_number_controller.dart';
 import 'package:secure_access/model_face/user_model.dart';
+import 'package:secure_access/screens/first_tab_screen.dart';
 import 'package:secure_access/screens/may_i_know_purpose_screen.dart';
 import 'package:secure_access/screens/whom_meeting_today_screen.dart';
+import 'package:secure_access/utils/toast_notify.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProvidePhoneNumberScreen extends StatefulWidget {
-  const ProvidePhoneNumberScreen({super.key, this.image, this.faceFeatures});
+  const ProvidePhoneNumberScreen(
+      {super.key, this.image, this.faceFeatures, this.firebaseKey});
   final String? image;
+  final String? firebaseKey;
+
   final FaceFeatures? faceFeatures;
 
   @override
@@ -50,115 +56,141 @@ class _ProvidePhoneNumberScreenState extends State<ProvidePhoneNumberScreen> {
   Widget build(BuildContext context) {
     // print(currentDate);
     // print(currentTime);
-    return Scaffold(
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                        onTap: () {
-                          Get.back();
-                        },
-                        child: const Icon(
-                          Icons.arrow_back_ios,
-                        )),
-                    const SizedBox(
-                      width: 220,
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(2, 192, 198, 199),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5),
-                        ),
+    return WillPopScope(
+      onWillPop: () async {
+        return await Get.defaultDialog(
+          backgroundColor: Colors.white,
+          title: "Exit?",
+          middleText: "Go back to HomeScreen",
+          textConfirm: 'Yes',
+          textCancel: 'No',
+          onConfirm: () {
+            Get.offAll(const FirstTabScreen());
+          },
+          onCancel: () {
+            Get.back(result: false);
+          },
+        );
+      },
+      child: Scaffold(
+        body: Form(
+          key: _formKey,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // GestureDetector(
+                      //     onTap: () {
+                      //       Get.back();
+                      //     },
+                      //     child: const Icon(
+                      //       Icons.arrow_back_ios,
+                      //     )),
+                      const SizedBox(
+                        width: 220,
                       ),
-                      onPressed: () async {
-                        // Get.to(const FirstVisitScreen());
-                        if (_formKey.currentState!.validate()) {
-                          await ubnc
-                              .getNamesList(int.parse(_phoneController.text));
-                          if (AppController.noMatched == 'No') {
-                            Get.to(MayIKnowYourPurposeScreen(
-                              countryCode: selectedCountryCode,
-                              mobileNumber: _phoneController.text,
-                              image: widget.image ?? '',
-                              faceFeatures: widget.faceFeatures,
-                            ));
-                          } else {
-                            Get.to(const WhomMeetingTodayScreen());
-                          }
-                        }
-                      },
-                      child: const Text(
-                        'Next',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 15),
-                const Text(
-                  'Please provide your phone number',
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 30),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 320,
-                      height: 65,
-                      child: IntlPhoneField(
-                        validator: (Value) {
-                          if (Value == null) {
-                            return 'Please enter Mobile Number';
-                          }
-                        },
-                        controller: _phoneController,
-                        flagsButtonPadding: const EdgeInsets.all(8),
-                        dropdownIconPosition: IconPosition.trailing,
-                        decoration: InputDecoration(
-                          labelText: 'Phone Number',
-                          border: OutlineInputBorder(
-                            borderSide: const BorderSide(),
-                            borderRadius: BorderRadius.circular(6),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              const Color.fromARGB(2, 192, 198, 199),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
                           ),
                         ),
-                        initialCountryCode: 'IN',
-                        onChanged: (phone) {
-                          // Update the selectedCountryCode when the country code changes
-                          selectedCountryCode = phone.countryCode!;
+                        onPressed: () async {
+                          // Get.to(const FirstVisitScreen());
+                          if (_formKey.currentState!.validate()) {
+                            AppController.setnoMatched(null);
+                            await ubnc
+                                .getNamesList(int.parse(_phoneController.text));
+                            if (AppController.noMatched == 'No') {
+                              Get.to(MayIKnowYourPurposeScreen(
+                                countryCode: selectedCountryCode,
+                                mobileNumber: _phoneController.text,
+                                image: widget.image ?? '',
+                                faceFeatures: widget.faceFeatures,
+                              ));
+                            } else if (AppController.accessToken == null) {
+                              toast('unauthorized');
+                              SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+                              await prefs.remove('token');
+                            } else {
+                              Get.to(WhomMeetingTodayScreen(
+                                firebaseKey: AppController.firebaseKey,
+                              ));
+                            }
+                          }
                         },
+                        child: const Text(
+                          'Next',
+                          style: TextStyle(color: Colors.black),
+                        ),
                       ),
-                    )
-                  ],
-                ),
-                const SizedBox(height: 25),
-                const Text(
-                  'if your visit is scheduled, Scan your QR Code',
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 15),
-                CircleAvatar(
-                  backgroundColor: Colors.grey,
-                  radius: 32,
-                  child: CircleAvatar(
-                    backgroundColor: Colors.white,
-                    radius: 31,
-                    child: Image.asset(
-                      'assets/images/qr.png',
-                      height: 32,
+                    ],
+                  ),
+                  const SizedBox(height: 15),
+                  const Text(
+                    'Please provide your phone number',
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 30),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 320,
+                        height: 65,
+                        child: IntlPhoneField(
+                          validator: (Value) {
+                            if (Value == null) {
+                              return 'Please enter Mobile Number';
+                            }
+                          },
+                          controller: _phoneController,
+                          flagsButtonPadding: const EdgeInsets.all(8),
+                          dropdownIconPosition: IconPosition.trailing,
+                          decoration: InputDecoration(
+                            labelText: 'Phone Number',
+                            border: OutlineInputBorder(
+                              borderSide: const BorderSide(),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                          ),
+                          initialCountryCode: 'IN',
+                          onChanged: (phone) {
+                            // Update the selectedCountryCode when the country code changes
+                            selectedCountryCode = phone.countryCode!;
+                          },
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 25),
+                  const Text(
+                    'if your visit is scheduled, Scan your QR Code',
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 15),
+                  CircleAvatar(
+                    backgroundColor: Colors.grey,
+                    radius: 32,
+                    child: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      radius: 31,
+                      child: Image.asset(
+                        'assets/images/qr.png',
+                        height: 32,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

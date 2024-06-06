@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:secure_access/controllers/app_controller.dart';
 import 'package:secure_access/screens/login_screen.dart';
 import 'package:secure_access/services/api_services.dart';
+import 'package:secure_access/utils/toast_notify.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ThankyouFormSubmissionController extends GetxController {
   Future ThankyouFinalForm(
@@ -25,6 +27,7 @@ class ThankyouFormSubmissionController extends GetxController {
     int meetingFor,
     hasTool,
     quantity,
+    firebaseKey,
   ) async {
     http.Response response = await http.post(
       Uri.parse('${ApiService.baseUrl}/api/visitor/createVisitorInvite'),
@@ -44,6 +47,7 @@ class ThankyouFormSubmissionController extends GetxController {
         "visitTime": visitTime,
         "meetingFor": meetingFor,
         "hasTool": hasTool,
+        "firebaseKey": firebaseKey,
         "ndaSignature": ndaSignature,
         "toolDetails": {
           "toolName": toolName,
@@ -70,34 +74,12 @@ class ThankyouFormSubmissionController extends GetxController {
           },
         );
       }
-    } else if (response.statusCode != 200) {
-      Map<String, dynamic> result = json.decode(response.body);
-      // bool? status = result['status'];
-      String title = result['title'];
-      String message = result['message'];
-
-      if (title == 'Validation Failed') {
-        Get.defaultDialog(
-          title: "Error",
-          middleText: message,
-          textConfirm: "OK",
-          confirmTextColor: Colors.white,
-          onConfirm: () {
-            Get.back(); // Close the dialog
-          },
-        );
-      } else if (title == 'Unauthorized') {
-        Get.defaultDialog(
-          title: "Error",
-          middleText: "$message \nplease re login",
-          textConfirm: "OK",
-          confirmTextColor: Colors.white,
-          onConfirm: () {
-            Get.offAll(LoginPage());
-            // Get.back(); // Close the dialog
-          },
-        );
-      }
+    } else if (response.statusCode == 401) {
+      AppController.setnoMatched('No');
+      AppController.setaccessToken(null);
+      toast('unauthorized');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.remove('token');
     }
   }
 }

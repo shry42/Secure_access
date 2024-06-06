@@ -3,7 +3,7 @@ class UserModel {
   String? name;
   String? image;
   FaceFeatures? faceFeatures;
-  int? registeredOn;
+  String? registeredOn;
 
   UserModel({
     this.id,

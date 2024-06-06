@@ -3,29 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:secure_access/controllers/app_controller.dart';
+import 'package:secure_access/controllers/checkout_controller.dart';
 import 'package:secure_access/controllers/user_by_firebase_id_controller.dart';
 import 'package:secure_access/model_face/user_model.dart';
-import 'package:secure_access/screens/login_screen.dart';
-import 'package:secure_access/screens/provide_phone_number_screen.dart';
-import 'package:secure_access/screens/whom_meeting_today_screen.dart';
+import 'package:secure_access/screens/first_tab_screen.dart';
+import 'package:secure_access/utils/toast_notify.dart';
 
-class IdentifiedImageScreen extends StatefulWidget {
+class IdentifiedCheckoutScreen extends StatefulWidget {
   final UserModel user;
   final dynamic dispImg;
-  final FaceFeatures? faceFeatures;
-  const IdentifiedImageScreen(
-      {super.key,
-      required this.user,
-      required this.dispImg,
-      this.faceFeatures});
+  const IdentifiedCheckoutScreen(
+      {super.key, required this.user, required this.dispImg});
 
   @override
-  State<IdentifiedImageScreen> createState() => _IdentifiedImageScreenState();
+  State<IdentifiedCheckoutScreen> createState() =>
+      _IdentifiedCheckoutScreenState();
 }
 
-class _IdentifiedImageScreenState extends State<IdentifiedImageScreen> {
+class _IdentifiedCheckoutScreenState extends State<IdentifiedCheckoutScreen> {
   dynamic image;
   final UserByFirebaseIdController ubfic = UserByFirebaseIdController();
+  final CheckoutController cc = CheckoutController();
   @override
   void initState() {
     String base64String = widget.dispImg; // Replace with your base64 string
@@ -36,7 +34,6 @@ class _IdentifiedImageScreenState extends State<IdentifiedImageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("${AppController.accessToken}");
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Column(
@@ -55,7 +52,7 @@ class _IdentifiedImageScreenState extends State<IdentifiedImageScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Container(height: 80, width: 80, child: image),
+                  SizedBox(height: 80, width: 80, child: image),
                   const SizedBox(
                     height: 15,
                   ),
@@ -66,7 +63,8 @@ class _IdentifiedImageScreenState extends State<IdentifiedImageScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Are you ${widget.user.name}?',
+                    textAlign: TextAlign.center,
+                    'Hello ${widget.user.name}\nDo you want to checkout?',
                     style: const TextStyle(
                         fontSize: 22, fontWeight: FontWeight.bold),
                   ),
@@ -78,21 +76,15 @@ class _IdentifiedImageScreenState extends State<IdentifiedImageScreen> {
                       children: [
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            minimumSize: Size(100, 40),
+                            minimumSize: const Size(100, 40),
                             backgroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5.0),
                             ),
                           ),
                           onPressed: () {
-                            Get.offAll(
-                                ProvidePhoneNumberScreen(
-                                  firebaseKey: '${widget.user.id}',
-                                  faceFeatures: widget.faceFeatures,
-                                  image: widget.dispImg,
-                                ),
-                                transition: Transition.rightToLeft,
-                                duration: const Duration(milliseconds: 500));
+                            toast('Chckout cancelled');
+                            Get.offAll(const FirstTabScreen());
                           },
                           child: const Text(
                             'No',
@@ -112,30 +104,13 @@ class _IdentifiedImageScreenState extends State<IdentifiedImageScreen> {
                           ),
                           onPressed: () async {
                             await ubfic.getNamesList('${widget.user.id}');
-                            if (AppController.accessToken == null) {
-                              Get.offAll(LoginPage());
-                            } else if (AppController.noMatched == 'No') {
-                              Get.offAll(
-                                ProvidePhoneNumberScreen(
-                                  firebaseKey: '${widget.user.id}',
-                                ),
-                                transition: Transition.rightToLeft,
-                                duration: const Duration(milliseconds: 500),
-                              );
-                              // Get.to(MayIKnowYourPurposeScreen(
-                              //   countryCode: selectedCountryCode,
-                              //   mobileNumber: _phoneController.text,
-                              //   image: widget.image ?? '',
-                              //   faceFeatures: widget.faceFeatures,
-                              // ));
+                            if (AppController.visitorInviteStatus == 1) {
+                              await cc.checkout(AppController.visitorId);
+                              toast('Checkout successful');
+                              Get.offAll(const FirstTabScreen());
                             } else {
-                              Get.offAll(
-                                WhomMeetingTodayScreen(
-                                  firebaseKey: '${widget.user.id}',
-                                ),
-                                transition: Transition.rightToLeft,
-                                duration: const Duration(milliseconds: 500),
-                              );
+                              toast('Your Checkin is not yet approved');
+                              Get.offAll(const FirstTabScreen());
                             }
                           },
                           child: const Text(

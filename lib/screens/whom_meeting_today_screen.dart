@@ -15,9 +15,10 @@ class WhomMeetingTodayScreen extends StatefulWidget {
       this.fullName,
       this.email,
       this.purpose,
-      this.mobNo});
+      this.mobNo,
+      this.firebaseKey});
 
-  final String? countryCode, fullName, email, purpose, mobNo;
+  final String? countryCode, fullName, email, purpose, mobNo, firebaseKey;
   // final String? mobNo;
   // final String? purpose;
 
@@ -82,6 +83,7 @@ class _WhomMeetingTodayScreenState extends State<WhomMeetingTodayScreen> {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         if (AppController.noMatched == 'No') {
+                          AppController.setFirebaseKey(null);
                           Get.to(CarryingAssetsScreen(
                             countryCode: widget.countryCode,
                             fullName: widget.fullName,
@@ -89,6 +91,7 @@ class _WhomMeetingTodayScreenState extends State<WhomMeetingTodayScreen> {
                             mobNo: widget.mobNo,
                             purpose: widget.purpose,
                             meetingFor: nameId,
+                            firebaseKey: widget.firebaseKey,
                           ));
                         } else {
                           Get.to(
@@ -96,6 +99,7 @@ class _WhomMeetingTodayScreenState extends State<WhomMeetingTodayScreen> {
                               countryCode: AppController.countryCode,
                               mobileNumber: AppController.mobile,
                               meetingFor: nameId,
+                              firebaseKey: widget.firebaseKey,
                             ),
                           );
                         }

@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:get/get.dart';
+import 'package:secure_access/controllers/app_controller.dart';
 import 'package:secure_access/controllers/final_thankyou_form_controller.dart';
 import 'package:secure_access/screens/first_tab_screen.dart';
 import 'package:secure_access/screens/thankyou_final_screen.dart';
@@ -24,7 +25,8 @@ class ThankyouScreen extends StatefulWidget {
       this.remark,
       this.quantity,
       this.base64ToolImage,
-      this.hasTool});
+      this.hasTool,
+      this.firebaseKey});
 
   final String? countryCode,
       fullName,
@@ -34,6 +36,7 @@ class ThankyouScreen extends StatefulWidget {
       toolName,
       make,
       remark,
+      firebaseKey,
       base64ToolImage;
   final int? meetingFor, quantity, hasTool;
 
@@ -89,16 +92,20 @@ class _ThankyouScreenState extends State<ThankyouScreen> {
         'description',
         currentDate,
         currentTime,
-        widget.base64ToolImage,
+        base64Image,
         widget.toolName,
         widget.make,
         widget.remark,
-        base64Image,
+        widget.base64ToolImage,
         widget.meetingFor!.toInt(),
-        widget.hasTool,
-        widget.quantity);
-    // toast('successfully verified');
-    Get.offAll(const ThankyouFinalScreen());
+        widget.hasTool.toString(),
+        widget.quantity,
+        widget.firebaseKey);
+
+    if (AppController.accessToken == null) {
+      AppController.setnoMatched('No');
+      Get.offAll(const ThankyouFinalScreen());
+    }
   }
 
   @override
