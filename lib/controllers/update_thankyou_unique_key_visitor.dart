@@ -9,44 +9,35 @@ import 'package:secure_access/services/api_services.dart';
 import 'package:secure_access/utils/toast_notify.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ThankyouFormSubmissionController extends GetxController {
-  Future ThankyouFinalForm(
-    String fullName,
-    email,
-    countryCode,
-    mobileNo,
-    company,
-    purpose,
-    description,
-    visitDate,
-    visitTime,
-    ndaSignature,
+class UpdateThankuouOfUniqueVisitor extends GetxController {
+  Future upadteFinalUniqueKey(
+    String? ndaSignature,
     toolName,
     make,
     remark,
-    toolPic,
-    int meetingFor,
-    hasTool,
-    quantity,
     firebaseKey,
+    toolPic,
+    dynamic hasTool,
+    quantity,
   ) async {
-    http.Response response = await http.post(
-      Uri.parse('${ApiService.baseUrl}/api/visitor/createVisitorInvite'),
+    http.Response response = await http.put(
+      Uri.parse('${ApiService.baseUrl}/api/visitor/updateInvite'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${AppController.accessToken}',
       },
       body: json.encode({
-        "fullName": fullName,
-        "email": email,
-        "countryCode": countryCode,
-        "mobileNo": mobileNo,
-        "company": company,
-        "purpose": purpose,
-        "description": description,
-        "visitDate": visitDate,
-        "visitTime": visitTime,
-        "meetingFor": meetingFor,
+        // "fullName": fullName,
+        // "email": email,
+        // "countryCode": countryCode,
+        // "mobileNo": mobileNo,
+        // "company": company,
+        // "purpose": purpose,
+        // "description": description,
+        // "visitDate": visitDate,
+        // "visitTime": visitTime,
+        // "meetingFor": meetingFor,
+        "visitId": AppController.visitorId,
         "hasTool": hasTool,
         "firebaseKey": firebaseKey,
         "ndaSignature": ndaSignature,
@@ -63,8 +54,10 @@ class ThankyouFormSubmissionController extends GetxController {
       Map<String, dynamic> result = json.decode(response.body);
       bool? status = result['status'];
       String message = result['message'];
+      AppController.setFirebaseKey('');
       AppController.setnoName('');
       AppController.setEmail('');
+      AppController.setCallUpadteMethod(0);
       Get.offAll(const ThankyouFinalScreen());
       // if (status == true) {
       //   Get.defaultDialog(

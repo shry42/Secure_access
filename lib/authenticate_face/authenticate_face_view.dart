@@ -6,25 +6,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_face_api/face_api.dart' as regula;
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:secure_access/authenticate_face/scanning_animation/animated_view.dart';
-import 'package:secure_access/authenticate_face/user_details_view.dart';
 import 'package:secure_access/common/utils/custom_snackbar.dart';
-import 'package:secure_access/common/utils/extensions/size_extension.dart';
 import 'package:secure_access/common/utils/extract_face_feature.dart';
 import 'package:secure_access/common/utils/screen_size_util.dart';
 import 'package:secure_access/common/views/camera_view.dart';
 import 'package:secure_access/common/views/custom_button.dart';
-import 'package:secure_access/constants/theme.dart';
 import 'package:secure_access/model_face/user_model.dart';
-import 'package:secure_access/register_face/enter_details_view.dart';
-import 'package:secure_access/register_face/register_face_view.dart';
+import 'package:secure_access/screens/do_you_hv_unique_key.dart';
 import 'package:secure_access/screens/identified_image.dart';
 import 'package:secure_access/screens/provide_phone_number_screen.dart';
-import 'package:secure_access/utils/toast_notify.dart';
 
 class AuthenticateFaceView extends StatefulWidget {
   const AuthenticateFaceView({Key? key}) : super(key: key);
@@ -46,7 +39,6 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
   var image2 = regula.MatchFacesImage();
   dynamic _capturedImage;
   dynamic _capturedDispImg;
-  dynamic customButtonShow = 0;
 
   final TextEditingController _nameController = TextEditingController();
   String _similarity = "";
@@ -101,18 +93,10 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
                     _setImage(image);
                   },
                   onInputImage: (inputImage) async {
-                    // setState(() => isMatching = true);
-                    setState(() {
-                      isMatching = true;
-                      // customButtonShow = 1;
-                    });
+                    setState(() => isMatching = true);
                     _faceFeatures =
                         await extractFaceFeatures(inputImage, _faceDetector);
-                    // setState(() => isMatching = false);
-                    setState(() {
-                      isMatching = false;
-                      customButtonShow = 1;
-                    });
+                    setState(() => isMatching = false);
                   },
                 ),
                 // if (isMatching)
@@ -121,9 +105,7 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
                 //     child: AnimatedView(),
                 //   ),
                 //
-                if (_canAuthenticate &&
-                    _faceFeatures == null &&
-                    customButtonShow == 1)
+                if (_canAuthenticate && _faceFeatures == null)
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: CustomButton(
@@ -131,8 +113,6 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
                       onTap: () {
                         // setState(() {});
                         _canAuthenticate = false;
-                        customButtonShow = 0;
-
                         Get.to(() => const AuthenticateFaceView());
                       },
                     ),
@@ -274,17 +254,11 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
 
         await _matchFaces();
       } else {
-        // _showFailureDialog(
-        //   title: "No Users Registered",
-        //   description:
-        //       "Make sure users are registered first before Authenticating.",
-        // );
-        // Get.offAll(EnterDetailsView(
-        //   image: _capturedImage,
-        //   faceFeatures: _faceFeatures,
-        // ));
-
-        Get.offAll(() => ProvidePhoneNumberScreen(
+        // Get.offAll(() => ProvidePhoneNumberScreen(
+        //       image: _capturedImage,
+        //       faceFeatures: _faceFeatures,
+        //     ));
+        Get.offAll(() => DoYouHaveUniqueKey(
               image: _capturedImage,
               faceFeatures: _faceFeatures,
             ));
@@ -363,7 +337,7 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
         //     ),
         //   ), );
 
-        Get.offAll(() => ProvidePhoneNumberScreen(
+        Get.offAll(() => DoYouHaveUniqueKey(
               image: _capturedImage,
               faceFeatures: _faceFeatures,
             ));
@@ -431,7 +405,7 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
         //   ),
         // );
 
-        Get.offAll(() => ProvidePhoneNumberScreen(
+        Get.offAll(() => DoYouHaveUniqueKey(
               image: _capturedImage,
               faceFeatures: _faceFeatures,
             ));
@@ -447,7 +421,7 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
         //   ),
         // );
 
-        Get.offAll(() => ProvidePhoneNumberScreen(
+        Get.offAll(() => DoYouHaveUniqueKey(
               image: _capturedImage,
               faceFeatures: _faceFeatures,
             ));

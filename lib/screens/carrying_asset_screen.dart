@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -8,8 +9,11 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:secure_access/controllers/app_controller.dart';
+import 'package:secure_access/model_face/user_model.dart';
 import 'package:secure_access/screens/thankyou_screen.dart';
 import 'package:secure_access/utils/toast_notify.dart';
+import 'package:uuid/uuid.dart';
 
 class CarryingAssetsScreen extends StatefulWidget {
   const CarryingAssetsScreen(
@@ -20,10 +24,14 @@ class CarryingAssetsScreen extends StatefulWidget {
       this.purpose,
       this.mobNo,
       this.meetingFor,
-      this.firebaseKey});
+      this.firebaseKey,
+      this.image,
+      this.faceFeatures});
 
   final String? countryCode, fullName, email, purpose, mobNo, firebaseKey;
   final int? meetingFor;
+  final String? image;
+  final FaceFeatures? faceFeatures;
 
   @override
   State<CarryingAssetsScreen> createState() => _CarryingAssetsScreenState();
@@ -51,20 +59,29 @@ class _CarryingAssetsScreenState extends State<CarryingAssetsScreen> {
   late XFile? selectedImage;
   bool displayImage = false;
   String? base64ImageTool;
+  Uint8List? bytes;
+  String? userId;
+  String? currentTime;
+  String? currentDate;
   @override
   void initState() {
+    void initState() {
+      String base64String =
+          widget.image.toString(); // Replace with your base64 string
+      bytes = base64Decode(base64String);
+      // Get the current date
+      DateTime now = DateTime.now();
+      currentDate =
+          "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+
+      // Get the current time in 24-hour format
+      currentTime =
+          "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
+
+      super.initState();
+    }
+
     super.initState();
-    // // Get the current date
-    // DateTime now = DateTime.now();
-    // currentDate =
-    //     "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
-
-    // // Get the current time in 24-hour format
-    // currentTime =
-    //     "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
-
-    // // Initialize the selectedCountryCode with the default country code
-    // selectedCountryCode = '+91'; // You can set it to any default value
   }
 
   @override
@@ -97,33 +114,56 @@ class _CarryingAssetsScreenState extends State<CarryingAssetsScreen> {
                       borderRadius: BorderRadius.circular(5),
                     ),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
+                    hasTool = 1;
+                    userId = const Uuid().v1();
+                    AppController.setFirebaseKey(userId);
+
                     if (isYes == true) {
-                      // if (displayImage == false) {
-                      //   toast('please take photo');
-                      // }
-                      // if (_formKey.currentState!.validate()) {
-                      Get.to(
-                        ThankyouScreen(
-                          countryCode: widget.countryCode,
-                          fullName: widget.fullName,
-                          email: widget.email,
-                          mobNo: widget.mobNo,
-                          purpose: widget.purpose,
-                          meetingFor: widget.meetingFor,
+                      if (AppController.callUpadateMethod == 1) {
+                        UserModel user = UserModel(
+                          id: widget.firebaseKey ?? userId,
+                          name: widget.fullName,
+                          image: widget.image,
+                          // registeredOn: '$currentDate $currentTime',
+                          registeredOn: '',
+                          faceFeatures: widget.faceFeatures,
+                        );
+
+                        FirebaseFirestore.instance
+                            .collection("users")
+                            .doc(widget.firebaseKey)
+                            .set(user.toJson())
+                            .catchError((e) {});
+                        Get.to(ThankyouScreen(
                           hasTool: hasTool,
+                          base64ToolImage: base64ImageTool,
                           toolName: toolNameController.text,
                           make: makeController.text,
                           remark: remarkController.text,
-                          firebaseKey: widget.firebaseKey,
-                          quantity: int.parse(quantityController.text),
-                          base64ToolImage: base64ImageTool,
-                        ),
-                      );
-                      // }
-                    } else {
-                      toast('please fill all fields');
+                        ));
+                      } else {
+                        Get.to(
+                          ThankyouScreen(
+                            countryCode: widget.countryCode,
+                            fullName: widget.fullName,
+                            email: widget.email,
+                            mobNo: widget.mobNo,
+                            purpose: widget.purpose,
+                            meetingFor: widget.meetingFor,
+                            hasTool: hasTool,
+                            toolName: toolNameController.text,
+                            make: makeController.text,
+                            remark: remarkController.text,
+                            firebaseKey: widget.firebaseKey,
+                            quantity: int.parse(quantityController.text),
+                            base64ToolImage: base64ImageTool,
+                          ),
+                        );
+                      }
                     }
+                    // });
+                    // });
                   },
                   child: const Text(
                     'Next',
@@ -159,10 +199,10 @@ class _CarryingAssetsScreenState extends State<CarryingAssetsScreen> {
                         ),
                       ),
                       onPressed: () {
-                        setState(() {
-                          hasTool = 1;
-                          isYes = true;
-                        });
+                        // setState(() {
+                        hasTool = 1;
+                        isYes = true;
+                        // });
                       },
                       child: const Text(
                         'Yes',
@@ -178,19 +218,38 @@ class _CarryingAssetsScreenState extends State<CarryingAssetsScreen> {
                         ),
                       ),
                       onPressed: () {
-                        setState(() {
+                        if (AppController.callUpadateMethod == 1) {
                           hasTool = 0;
-                        });
+                          userId = const Uuid().v1();
+                          AppController.setFirebaseKey(userId);
+
+                          UserModel user = UserModel(
+                            id: widget.firebaseKey ?? userId,
+                            name: widget.fullName,
+                            image: widget.image,
+                            registeredOn: '$currentDate $currentTime',
+                            // registeredOn: '',
+                            faceFeatures: widget.faceFeatures,
+                          );
+                          FirebaseFirestore.instance
+                              .collection("users")
+                              .doc(widget.firebaseKey)
+                              .set(user.toJson())
+                              .catchError((e) {});
+                          Get.to(ThankyouScreen(
+                            hasTool: hasTool,
+                          ));
+                        }
                         Get.to(
                           ThankyouScreen(
                             countryCode: widget.countryCode,
                             fullName: widget.fullName,
                             email: widget.email,
                             mobNo: widget.mobNo,
+                            firebaseKey: widget.firebaseKey ?? userId,
                             purpose: widget.purpose,
                             meetingFor: widget.meetingFor,
                             hasTool: hasTool,
-                            firebaseKey: widget.firebaseKey,
                             // toolName: toolNameController.text,
                             // make: makeController.text,
                             // remark: remarkController.text,

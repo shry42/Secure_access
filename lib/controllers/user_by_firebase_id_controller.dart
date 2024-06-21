@@ -29,6 +29,7 @@ class UserByFirebaseIdController extends GetxController {
       final email = data['email'];
       final mobileNo = data['mobileNo'];
       final countryCode = data['countryCode'];
+      final firebaseKey = data['firebaseKey'];
 
       AppController.setVisitorId(visitorId);
       AppController.setVisitorInviteStatus(visitorInviteStatus);
@@ -36,6 +37,7 @@ class UserByFirebaseIdController extends GetxController {
       AppController.setEmail(email);
       AppController.setMobile(mobileNo);
       AppController.setCountryCode(countryCode);
+      AppController.setFirebaseKey(firebaseKey);
 
       // userListObj = data.map((e) => UserByNumberModel.fromJson(e)).toList();
       AppController.setnoMatched('Yes');

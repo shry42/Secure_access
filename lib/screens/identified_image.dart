@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:secure_access/controllers/app_controller.dart';
 import 'package:secure_access/controllers/user_by_firebase_id_controller.dart';
 import 'package:secure_access/model_face/user_model.dart';
+import 'package:secure_access/screens/carrying_asset_screen.dart';
+import 'package:secure_access/screens/do_you_hv_unique_key.dart';
 import 'package:secure_access/screens/login_screen.dart';
 import 'package:secure_access/screens/provide_phone_number_screen.dart';
 import 'package:secure_access/screens/whom_meeting_today_screen.dart';
@@ -49,8 +51,8 @@ class _IdentifiedImageScreenState extends State<IdentifiedImageScreen> {
                 borderRadius: BorderRadius.circular(12),
                 color: Colors.white,
               ),
-              height: 300,
-              width: 250,
+              height: 320,
+              width: 280,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -65,10 +67,13 @@ class _IdentifiedImageScreenState extends State<IdentifiedImageScreen> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    'Are you ${widget.user.name}?',
-                    style: const TextStyle(
-                        fontSize: 22, fontWeight: FontWeight.bold),
+                  Center(
+                    child: Text(
+                      'Are you ${widget.user.name}?',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                          fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
                   ),
                   const SizedBox(height: 15),
                   Padding(
@@ -85,14 +90,22 @@ class _IdentifiedImageScreenState extends State<IdentifiedImageScreen> {
                             ),
                           ),
                           onPressed: () {
+                            // Get.offAll(
+                            //     ProvidePhoneNumberScreen(
+                            //       firebaseKey: '${widget.user.id}',
+                            //       faceFeatures: widget.faceFeatures,
+                            //       image: widget.dispImg,
+                            //     ),
+                            //     transition: Transition.rightToLeft,
+                            //     duration: const Duration(milliseconds: 500));
                             Get.offAll(
-                                ProvidePhoneNumberScreen(
-                                  firebaseKey: '${widget.user.id}',
-                                  faceFeatures: widget.faceFeatures,
-                                  image: widget.dispImg,
-                                ),
-                                transition: Transition.rightToLeft,
-                                duration: const Duration(milliseconds: 500));
+                              // ProvidePhoneNumberScreen(
+                              //   firebaseKey: '${widget.user.id}',
+                              // ),
+                              const DoYouHaveUniqueKey(),
+                              transition: Transition.rightToLeft,
+                              duration: const Duration(milliseconds: 500),
+                            );
                           },
                           child: const Text(
                             'No',
@@ -116,8 +129,12 @@ class _IdentifiedImageScreenState extends State<IdentifiedImageScreen> {
                               Get.offAll(LoginPage());
                             } else if (AppController.noMatched == 'No') {
                               Get.offAll(
-                                ProvidePhoneNumberScreen(
-                                  firebaseKey: '${widget.user.id}',
+                                // ProvidePhoneNumberScreen(
+                                //   firebaseKey: '${widget.user.id}',
+                                // ),
+                                DoYouHaveUniqueKey(
+                                  faceFeatures: widget.faceFeatures,
+                                  image: widget.dispImg,
                                 ),
                                 transition: Transition.rightToLeft,
                                 duration: const Duration(milliseconds: 500),
@@ -129,13 +146,22 @@ class _IdentifiedImageScreenState extends State<IdentifiedImageScreen> {
                               //   faceFeatures: widget.faceFeatures,
                               // ));
                             } else {
-                              Get.offAll(
-                                WhomMeetingTodayScreen(
-                                  firebaseKey: '${widget.user.id}',
-                                ),
-                                transition: Transition.rightToLeft,
-                                duration: const Duration(milliseconds: 500),
-                              );
+                              // Get.offAll(
+                              //   WhomMeetingTodayScreen(
+                              //     firebaseKey: '${widget.user.id}',
+                              //   ),
+                              //   transition: Transition.rightToLeft,
+                              //   duration: const Duration(milliseconds: 500),
+                              // );
+                              Get.to(CarryingAssetsScreen(
+                                countryCode: AppController.countryCode,
+                                fullName: AppController.noName,
+                                email: AppController.email,
+                                mobNo: AppController.mobile,
+                                // image: widget.image,
+                                // faceFeatures: widget.faceFeatures,
+                                firebaseKey: AppController.firebaseKey,
+                              ));
                             }
                           },
                           child: const Text(

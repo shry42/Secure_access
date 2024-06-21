@@ -4,6 +4,7 @@ import 'package:flutter/painting.dart';
 import 'package:get/get.dart';
 import 'package:secure_access/controllers/app_controller.dart';
 import 'package:secure_access/controllers/usernames_whom_to_meet_controller.dart';
+import 'package:secure_access/model_face/user_model.dart';
 import 'package:secure_access/screens/carrying_asset_screen.dart';
 import 'package:secure_access/screens/may_i_know_purpose_screen.dart';
 import 'package:secure_access/screens/thankyou_screen.dart';
@@ -16,9 +17,14 @@ class WhomMeetingTodayScreen extends StatefulWidget {
       this.email,
       this.purpose,
       this.mobNo,
-      this.firebaseKey});
+      this.firebaseKey,
+      this.faceFeatures,
+      this.image});
 
   final String? countryCode, fullName, email, purpose, mobNo, firebaseKey;
+  final FaceFeatures? faceFeatures;
+  final String? image;
+
   // final String? mobNo;
   // final String? purpose;
 
@@ -91,14 +97,20 @@ class _WhomMeetingTodayScreenState extends State<WhomMeetingTodayScreen> {
                             mobNo: widget.mobNo,
                             purpose: widget.purpose,
                             meetingFor: nameId,
+                            image: widget.image,
+                            faceFeatures: widget.faceFeatures,
                             firebaseKey: widget.firebaseKey,
                           ));
                         } else {
                           Get.to(
                             MayIKnowYourPurposeScreen(
+                              fullName: widget.fullName,
+                              email: widget.email,
                               countryCode: AppController.countryCode,
                               mobileNumber: AppController.mobile,
                               meetingFor: nameId,
+                              image: widget.image,
+                              faceFeatures: widget.faceFeatures,
                               firebaseKey: widget.firebaseKey,
                             ),
                           );

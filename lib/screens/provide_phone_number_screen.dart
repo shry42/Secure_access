@@ -7,10 +7,12 @@ import 'package:secure_access/controllers/app_controller.dart';
 import 'package:secure_access/controllers/user_by_number_controller.dart';
 import 'package:secure_access/model_face/user_model.dart';
 import 'package:secure_access/screens/first_tab_screen.dart';
+import 'package:secure_access/screens/login_screen.dart';
 import 'package:secure_access/screens/may_i_know_purpose_screen.dart';
 import 'package:secure_access/screens/whom_meeting_today_screen.dart';
 import 'package:secure_access/utils/toast_notify.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 class ProvidePhoneNumberScreen extends StatefulWidget {
   const ProvidePhoneNumberScreen(
@@ -120,8 +122,22 @@ class _ProvidePhoneNumberScreenState extends State<ProvidePhoneNumberScreen> {
                               SharedPreferences prefs =
                                   await SharedPreferences.getInstance();
                               await prefs.remove('token');
+                              Get.offAll(LoginPage());
                             } else {
+                              String userId = Uuid().v1();
+                              if (AppController.firebaseKey == null) {
+                                Get.to(WhomMeetingTodayScreen(
+                                    fullName: AppController.noName,
+                                    email: AppController.email,
+                                    image: widget.image ?? '',
+                                    faceFeatures: widget.faceFeatures,
+                                    firebaseKey: userId));
+                              }
                               Get.to(WhomMeetingTodayScreen(
+                                fullName: AppController.noName,
+                                email: AppController.email,
+                                image: widget.image ?? '',
+                                faceFeatures: widget.faceFeatures,
                                 firebaseKey: AppController.firebaseKey,
                               ));
                             }
@@ -156,6 +172,7 @@ class _ProvidePhoneNumberScreenState extends State<ProvidePhoneNumberScreen> {
                           flagsButtonPadding: const EdgeInsets.all(8),
                           dropdownIconPosition: IconPosition.trailing,
                           decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.all(8),
                             labelText: 'Phone Number',
                             border: OutlineInputBorder(
                               borderSide: const BorderSide(),

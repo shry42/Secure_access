@@ -4,10 +4,7 @@ import 'package:get/get.dart';
 import 'package:secure_access/authenticate_face/authenticate_face_view.dart';
 import 'package:secure_access/common/utils/custom_snackbar.dart';
 import 'package:secure_access/common/utils/screen_size_util.dart';
-import 'package:secure_access/screens/capture_image_screen.dart';
 import 'package:secure_access/screens/checkout_authenticate.dart';
-import 'package:secure_access/screens/checkout_screen.dart';
-import 'package:secure_access/screens/thankyou_final_screen.dart';
 
 class FirstTabScreen extends StatefulWidget {
   const FirstTabScreen({super.key});
@@ -25,10 +22,10 @@ class _FirstTabScreenState extends State<FirstTabScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(
+          const SizedBox(
             height: 118,
           ),
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Text('வரவேற்பு'),
@@ -37,8 +34,8 @@ class _FirstTabScreenState extends State<FirstTabScreen> {
               )
             ],
           ),
-          SizedBox(height: 5),
-          Row(
+          const SizedBox(height: 5),
+          const Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SizedBox(
@@ -50,8 +47,8 @@ class _FirstTabScreenState extends State<FirstTabScreen> {
               ),
             ],
           ),
-          SizedBox(height: 5),
-          Row(
+          const SizedBox(height: 5),
+          const Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SizedBox(
@@ -60,7 +57,7 @@ class _FirstTabScreenState extends State<FirstTabScreen> {
               Text('Wollenna'),
             ],
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -156,7 +153,7 @@ class _FirstTabScreenState extends State<FirstTabScreen> {
             ],
           ),
           const SizedBox(
-            height: 210,
+            height: 258.05,
           ),
           Stack(children: [
             Container(

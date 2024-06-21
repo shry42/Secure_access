@@ -15,10 +15,14 @@ class MayIKnowYourPurposeScreen extends StatefulWidget {
       this.meetingFor,
       this.image,
       this.faceFeatures,
-      this.firebaseKey});
+      this.firebaseKey,
+      this.fullName,
+      this.email});
 
   final String? countryCode;
   final String? mobileNumber;
+  final String? fullName;
+  final String? email;
   final int? meetingFor;
   final String? image;
   final String? firebaseKey;
@@ -95,6 +99,8 @@ class _MayIKnowYourPurposeScreenState extends State<MayIKnowYourPurposeScreen> {
                           email: AppController.email,
                           purpose: 'vendor',
                           firebaseKey: widget.firebaseKey,
+                          image: widget.image ?? '',
+                          faceFeatures: widget.faceFeatures,
                         ),
                       );
                     }
@@ -142,6 +148,8 @@ class _MayIKnowYourPurposeScreenState extends State<MayIKnowYourPurposeScreen> {
                         email: AppController.email,
                         purpose: 'interview',
                         firebaseKey: widget.firebaseKey,
+                        image: widget.image ?? '',
+                        faceFeatures: widget.faceFeatures,
                       ));
                     }
                   },
@@ -188,6 +196,8 @@ class _MayIKnowYourPurposeScreenState extends State<MayIKnowYourPurposeScreen> {
                         email: AppController.email,
                         purpose: 'client/consultant',
                         firebaseKey: widget.firebaseKey,
+                        image: widget.image ?? '',
+                        faceFeatures: widget.faceFeatures,
                       ));
                     }
                   },
@@ -234,6 +244,8 @@ class _MayIKnowYourPurposeScreenState extends State<MayIKnowYourPurposeScreen> {
                         email: AppController.email,
                         purpose: 'contract_employees',
                         firebaseKey: widget.firebaseKey,
+                        image: widget.image ?? '',
+                        faceFeatures: widget.faceFeatures,
                       ));
                     }
                   },
@@ -280,6 +292,8 @@ class _MayIKnowYourPurposeScreenState extends State<MayIKnowYourPurposeScreen> {
                         email: AppController.email,
                         purpose: 'others',
                         firebaseKey: widget.firebaseKey,
+                        image: widget.image ?? '',
+                        faceFeatures: widget.faceFeatures,
                       ));
                     }
                   },

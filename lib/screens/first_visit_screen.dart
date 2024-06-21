@@ -98,21 +98,9 @@ class _FirstVisitScreenState extends State<FirstVisitScreen> {
                               .collection("users")
                               .doc(userId)
                               .set(user.toJson())
-                              .catchError((e) {
-                            // log("Registration Error: $e");
-                            // Navigator.of(context).pop();
-                            // CustomSnackBar.errorSnackBar(
-                            //     "Registration Failed! Try Again.");
-                          }).whenComplete(() {
-                            // Navigator.of(context).pop();
-                            // CustomSnackBar.successSnackBar(
-                            //     "Registration Success!");
+                              .catchError((e) {})
+                              .whenComplete(() {
                             Future.delayed(const Duration(seconds: 1), () {
-                              //Reaches HomePage
-                              // Navigator.of(context)
-                              //   ..pop()
-                              //   ..pop()
-                              //   ..pop();
                               Get.to(
                                 WhomMeetingTodayScreen(
                                   countryCode: widget.countryCode,
@@ -120,6 +108,8 @@ class _FirstVisitScreenState extends State<FirstVisitScreen> {
                                   purpose: widget.purpose,
                                   fullName: fullNameController.text,
                                   email: emailController.text,
+                                  image: widget.image,
+                                  faceFeatures: widget.faceFeatures,
                                   firebaseKey: userId,
                                 ),
                               );

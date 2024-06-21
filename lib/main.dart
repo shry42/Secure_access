@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:secure_access/controllers/app_controller.dart';
+import 'package:secure_access/screens/first_tab_screen%20copy.dart';
 import 'package:secure_access/screens/first_tab_screen.dart';
 import 'package:secure_access/screens/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -49,7 +50,7 @@ class _MyAppState extends State<MyApp> {
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
               useMaterial3: true,
             ),
-            home: snapshot.data == null ? LoginPage() : FirstTabScreen(),
+            home: snapshot.data == null ? LoginPage() : const FirstTabScreen(),
             // home: const MLStartScreen(),
             // home: const ThankyouFinalScreen(),
             // home: const FirstTabScreen(),

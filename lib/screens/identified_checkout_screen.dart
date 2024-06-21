@@ -46,7 +46,7 @@ class _IdentifiedCheckoutScreenState extends State<IdentifiedCheckoutScreen> {
                 borderRadius: BorderRadius.circular(12),
                 color: Colors.white,
               ),
-              height: 300,
+              height: 400,
               width: 250,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,

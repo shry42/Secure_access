@@ -24,11 +24,23 @@ class AppController {
   static int? _visitorId;
   static int? _verification;
   static int? _visitorInviteStatus;
+  static int? _callUpdateMethod;
+  static int? _isvalidKey;
 
   static get verification => _verification;
   static setVerification(value) {
     _verification =
         value; // for verify my timesheet's data with value as 1 and 0
+  }
+
+  static get isValidKey => _isvalidKey;
+  static setValidKey(value) {
+    _isvalidKey = value;
+  }
+
+  static get callUpadateMethod => _callUpdateMethod;
+  static setCallUpadteMethod(value) {
+    _callUpdateMethod = value;
   }
 
   static get depName => _depName;
