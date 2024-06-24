@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -13,6 +13,7 @@ import 'package:secure_access/controllers/app_controller.dart';
 import 'package:secure_access/model_face/user_model.dart';
 import 'package:secure_access/screens/thankyou_screen.dart';
 import 'package:secure_access/utils/toast_notify.dart';
+// import 'package:secure_access/utils/toast_notify.dart';
 import 'package:uuid/uuid.dart';
 
 class CarryingAssetsScreen extends StatefulWidget {
@@ -116,52 +117,56 @@ class _CarryingAssetsScreenState extends State<CarryingAssetsScreen> {
                   ),
                   onPressed: () async {
                     hasTool = 1;
-                    userId = const Uuid().v1();
-                    AppController.setFirebaseKey(userId);
+                    // userId = const Uuid().v1();
+                    // AppController.setFirebaseKey(userId);
 
                     if (isYes == true) {
-                      if (AppController.callUpadateMethod == 1) {
-                        UserModel user = UserModel(
-                          id: widget.firebaseKey ?? userId,
-                          name: widget.fullName,
-                          image: widget.image,
-                          // registeredOn: '$currentDate $currentTime',
-                          registeredOn: '',
-                          faceFeatures: widget.faceFeatures,
-                        );
+                      // if (AppController.callUpadateMethod == 1) {
+                      // UserModel user = UserModel(
+                      //   id: widget.firebaseKey ?? userId,
+                      //   name: widget.fullName,
+                      //   image: widget.image,
+                      //   // registeredOn: '$currentDate $currentTime',
+                      //   registeredOn: '',
+                      //   faceFeatures: widget.faceFeatures,
+                      // );
 
-                        FirebaseFirestore.instance
-                            .collection("users")
-                            .doc(widget.firebaseKey)
-                            .set(user.toJson())
-                            .catchError((e) {});
-                        Get.to(ThankyouScreen(
+                      // FirebaseFirestore.instance
+                      //     .collection("users")
+                      //     .doc(widget.firebaseKey)
+                      //     .set(user.toJson())
+                      //     .catchError((e) {});
+                      // Get.to(ThankyouScreen(
+                      //   hasTool: hasTool,
+                      //   base64ToolImage: base64ImageTool,
+                      //   toolName: toolNameController.text,
+                      //   make: makeController.text,
+                      //   remark: remarkController.text,
+                      // ));
+
+                      Get.to(
+                        ThankyouScreen(
+                          countryCode: widget.countryCode,
+                          fullName: widget.fullName,
+                          email: widget.email,
+                          mobNo: widget.mobNo,
+                          purpose: widget.purpose,
+                          meetingFor: widget.meetingFor,
                           hasTool: hasTool,
-                          base64ToolImage: base64ImageTool,
                           toolName: toolNameController.text,
                           make: makeController.text,
                           remark: remarkController.text,
-                        ));
-                      } else {
-                        Get.to(
-                          ThankyouScreen(
-                            countryCode: widget.countryCode,
-                            fullName: widget.fullName,
-                            email: widget.email,
-                            mobNo: widget.mobNo,
-                            purpose: widget.purpose,
-                            meetingFor: widget.meetingFor,
-                            hasTool: hasTool,
-                            toolName: toolNameController.text,
-                            make: makeController.text,
-                            remark: remarkController.text,
-                            firebaseKey: widget.firebaseKey,
-                            quantity: int.parse(quantityController.text),
-                            base64ToolImage: base64ImageTool,
-                          ),
-                        );
-                      }
+                          firebaseKey: widget.firebaseKey,
+                          quantity: int.parse(quantityController.text),
+                          base64ToolImage: base64ImageTool,
+                          faceFeatures: widget.faceFeatures,
+                          image: widget.image,
+                        ),
+                      );
+                    } else {
+                      toast('please fill all requiredd fields');
                     }
+                    // }
                     // });
                     // });
                   },
@@ -199,10 +204,10 @@ class _CarryingAssetsScreenState extends State<CarryingAssetsScreen> {
                         ),
                       ),
                       onPressed: () {
-                        // setState(() {
-                        hasTool = 1;
-                        isYes = true;
-                        // });
+                        setState(() {
+                          hasTool = 1;
+                          isYes = true;
+                        });
                       },
                       child: const Text(
                         'Yes',
@@ -218,43 +223,44 @@ class _CarryingAssetsScreenState extends State<CarryingAssetsScreen> {
                         ),
                       ),
                       onPressed: () {
-                        if (AppController.callUpadateMethod == 1) {
-                          hasTool = 0;
-                          userId = const Uuid().v1();
-                          AppController.setFirebaseKey(userId);
-
-                          UserModel user = UserModel(
-                            id: widget.firebaseKey ?? userId,
-                            name: widget.fullName,
-                            image: widget.image,
-                            registeredOn: '$currentDate $currentTime',
-                            // registeredOn: '',
-                            faceFeatures: widget.faceFeatures,
-                          );
-                          FirebaseFirestore.instance
-                              .collection("users")
-                              .doc(widget.firebaseKey)
-                              .set(user.toJson())
-                              .catchError((e) {});
-                          Get.to(ThankyouScreen(
-                            hasTool: hasTool,
-                          ));
-                        }
+                        // if (AppController.callUpadateMethod == 1) {
+                        //   hasTool = 0;
+                        //   userId = const Uuid().v1();
+                        //   AppController.setFirebaseKey(userId);
+                        //   UserModel user = UserModel(
+                        //     id: widget.firebaseKey ?? userId,
+                        //     name: widget.fullName,
+                        //     image: widget.image,
+                        //     registeredOn: '$currentDate $currentTime',
+                        //     // registeredOn: '',
+                        //     faceFeatures: widget.faceFeatures,
+                        //   );
+                        //   FirebaseFirestore.instance
+                        //       .collection("users")
+                        //       .doc(widget.firebaseKey)
+                        //       .set(user.toJson())
+                        //       .catchError((e) {});
+                        //   Get.to(ThankyouScreen(
+                        //     hasTool: hasTool,
+                        //   ));
+                        // }
                         Get.to(
                           ThankyouScreen(
                             countryCode: widget.countryCode,
                             fullName: widget.fullName,
                             email: widget.email,
                             mobNo: widget.mobNo,
-                            firebaseKey: widget.firebaseKey ?? userId,
+                            firebaseKey: widget.firebaseKey,
                             purpose: widget.purpose,
                             meetingFor: widget.meetingFor,
                             hasTool: hasTool,
+                            faceFeatures: widget.faceFeatures,
                             // toolName: toolNameController.text,
                             // make: makeController.text,
                             // remark: remarkController.text,
                             // quantity: int.parse(quantityController.text),
                             // base64ToolImage: base64ImageTool,
+                            image: widget.image,
                           ),
                         );
                       },

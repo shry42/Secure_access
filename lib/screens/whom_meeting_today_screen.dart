@@ -7,7 +7,6 @@ import 'package:secure_access/controllers/usernames_whom_to_meet_controller.dart
 import 'package:secure_access/model_face/user_model.dart';
 import 'package:secure_access/screens/carrying_asset_screen.dart';
 import 'package:secure_access/screens/may_i_know_purpose_screen.dart';
-import 'package:secure_access/screens/thankyou_screen.dart';
 
 class WhomMeetingTodayScreen extends StatefulWidget {
   const WhomMeetingTodayScreen(

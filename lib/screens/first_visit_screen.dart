@@ -85,36 +85,36 @@ class _FirstVisitScreenState extends State<FirstVisitScreen> {
                       onPressed: () {
                         // Get.to(const MayIKnowYourPurposeScreen());
                         if (_formKey.currentState!.validate()) {
-                          //
-                          String userId = Uuid().v1();
-                          UserModel user = UserModel(
-                            id: userId,
-                            name: fullNameController.text,
-                            image: widget.image,
-                            registeredOn: '$currentDate $currentTime',
-                            faceFeatures: widget.faceFeatures,
+                          // //
+                          // String userId = Uuid().v1();
+                          // UserModel user = UserModel(
+                          //   id: userId,
+                          //   name: fullNameController.text,
+                          //   image: widget.image,
+                          //   registeredOn: '$currentDate $currentTime',
+                          //   faceFeatures: widget.faceFeatures,
+                          // );
+                          // FirebaseFirestore.instance
+                          //     .collection("users")
+                          //     .doc(userId)
+                          //     .set(user.toJson())
+                          //     .catchError((e) {})
+                          //     .whenComplete(() {
+                          //   Future.delayed(const Duration(seconds: 1), () {
+                          Get.to(
+                            WhomMeetingTodayScreen(
+                              countryCode: widget.countryCode,
+                              mobNo: widget.mobNo,
+                              purpose: widget.purpose,
+                              fullName: fullNameController.text,
+                              email: emailController.text,
+                              image: widget.image,
+                              faceFeatures: widget.faceFeatures,
+                              // firebaseKey: userId,
+                            ),
                           );
-                          FirebaseFirestore.instance
-                              .collection("users")
-                              .doc(userId)
-                              .set(user.toJson())
-                              .catchError((e) {})
-                              .whenComplete(() {
-                            Future.delayed(const Duration(seconds: 1), () {
-                              Get.to(
-                                WhomMeetingTodayScreen(
-                                  countryCode: widget.countryCode,
-                                  mobNo: widget.mobNo,
-                                  purpose: widget.purpose,
-                                  fullName: fullNameController.text,
-                                  email: emailController.text,
-                                  image: widget.image,
-                                  faceFeatures: widget.faceFeatures,
-                                  firebaseKey: userId,
-                                ),
-                              );
-                            });
-                          });
+                          // });
+                          // });
                           //
                           // Get.to(
                           //   WhomMeetingTodayScreen(

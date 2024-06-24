@@ -14,6 +14,7 @@ import 'package:secure_access/common/utils/extract_face_feature.dart';
 import 'package:secure_access/common/utils/screen_size_util.dart';
 import 'package:secure_access/common/views/camera_view.dart';
 import 'package:secure_access/common/views/custom_button.dart';
+import 'package:secure_access/controllers/app_controller.dart';
 import 'package:secure_access/model_face/user_model.dart';
 import 'package:secure_access/screens/do_you_hv_unique_key.dart';
 import 'package:secure_access/screens/identified_image.dart';
@@ -258,6 +259,7 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
         //       image: _capturedImage,
         //       faceFeatures: _faceFeatures,
         //     ));
+        AppController.setFaceMatched(0);
         Get.offAll(() => DoYouHaveUniqueKey(
               image: _capturedImage,
               faceFeatures: _faceFeatures,
@@ -299,17 +301,9 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
 
     // Update state based on matching results
     if (matchingUsers.isNotEmpty) {
-      // setState(() {
-      //   loggingUser = matchingUsers.first;
-      //   isMatching = false;
-      //   trialNumber = 1;
-      // });
+      AppController.setFaceMatched(1);
 
       Navigator.of(context).push(
-        // MaterialPageRoute(
-        //   builder: (context) => UserDetailsView(user: matchingUsers.first!),
-        // ),
-
         //For tab screen
         MaterialPageRoute(
           builder: (context) => IdentifiedImageScreen(
@@ -322,104 +316,21 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
     } else {
       // Handle no match case
       if (trialNumber == 3) {
-        //it was 4
-        // setState(() => trialNumber = 1);
-        // Get.offAll(EnterDetailsView(
-        //   image: _capturedImage,
-        //   faceFeatures: _faceFeatures,
-        // ));
-
-        // Navigator.of(context).push(
-        //   MaterialPageRoute(
-        //     builder: (context) => EnterDetailsView(
-        //       image: _capturedImage!,
-        //       faceFeatures: _faceFeatures!,
-        //     ),
-        //   ), );
+        AppController.setFaceMatched(0);
 
         Get.offAll(() => DoYouHaveUniqueKey(
               image: _capturedImage,
               faceFeatures: _faceFeatures,
             ));
       } else if (trialNumber == 4) {
-        //it was 3
-        // _audioPlayer.stop();
-        // setState(() {
-        //   isMatching = false;
-        //   trialNumber++;
-        // });
-        // showDialog(
-        //     context: context,
-        //     builder: (context) {
-        //       return AlertDialog(
-        //         title: const Text("Enter Name"),
-        //         content: TextFormField(
-        //           controller: _nameController,
-        //           cursorColor: accentColor,
-        //           decoration: InputDecoration(
-        //             enabledBorder: OutlineInputBorder(
-        //               borderSide: const BorderSide(
-        //                 width: 2,
-        //                 color: accentColor,
-        //               ),
-        //               borderRadius: BorderRadius.circular(4),
-        //             ),
-        //             focusedBorder: OutlineInputBorder(
-        //               borderSide: const BorderSide(
-        //                 width: 2,
-        //                 color: accentColor,
-        //               ),
-        //               borderRadius: BorderRadius.circular(4),
-        //             ),
-        //           ),
-        //         ),
-        //         actions: [
-        //           TextButton(
-        //             onPressed: () {
-        //               if (_nameController.text.trim().isEmpty) {
-        //                 CustomSnackBar.errorSnackBar("Enter a name to proceed");
-        //               } else {
-        //                 Navigator.of(context).pop();
-        //                 setState(() => isMatching = true);
-        //                 _playScanningAudio;
-        //                 _fetchUserByName(_nameController.text.trim());
-        //               }
-        //             },
-        //             child: const Text(
-        //               "Done",
-        //               style: TextStyle(
-        //                 color: accentColor,
-        //               ),
-        //             ),
-        //           )
-        //         ],
-        //       );
-        //     });
-
-        // Navigator.of(context).push(
-        //   MaterialPageRoute(
-        //     builder: (context) => EnterDetailsView(
-        //       image: _capturedImage!,
-        //       faceFeatures: _faceFeatures!,
-        //     ),
-        //   ),
-        // );
+        AppController.setFaceMatched(0);
 
         Get.offAll(() => DoYouHaveUniqueKey(
               image: _capturedImage,
               faceFeatures: _faceFeatures,
             ));
       } else {
-        // setState(() => trialNumber++);
-
-        // Navigator.of(context).push(
-        //   MaterialPageRoute(
-        //     builder: (context) => EnterDetailsView(
-        //       image: _capturedImage!,
-        //       faceFeatures: _faceFeatures!,
-        //     ),
-        //   ),
-        // );
+        AppController.setFaceMatched(0);
 
         Get.offAll(() => DoYouHaveUniqueKey(
               image: _capturedImage,
@@ -428,67 +339,6 @@ class _AuthenticateFaceViewState extends State<AuthenticateFaceView> {
       }
     }
   }
-
-  // Future<void> _fetchUserByName(String orgID) async {
-  //   try {
-  //     final snap = await FirebaseFirestore.instance
-  //         .collection("users")
-  //         .where("organizationId", isEqualTo: orgID)
-  //         .get();
-
-  //     if (snap.docs.isNotEmpty) {
-  //       users.clear();
-  //       for (var doc in snap.docs) {
-  //         setState(() {
-  //           users.add([UserModel.fromJson(doc.data()), 1]);
-  //         });
-  //       }
-  //       await _matchFaces();
-  //     } else {
-  //       setState(() => trialNumber = 1);
-  //       _showFailureDialog(
-  //         title: "User Not Found",
-  //         description:
-  //             "User is not registered yet. Register first to authenticate.",
-  //       );
-  //     }
-  //   } catch (e) {
-  //     log("Getting User Error: $e");
-  //     setState(() => isMatching = false);
-  //     _playFailedAudio;
-  //     CustomSnackBar.errorSnackBar("Something went wrong. Please try again.");
-  //   }
-  // }
-
-  // _showFailureDialog({
-  //   required String title,
-  //   required String description,
-  // }) {
-  //   _playFailedAudio;
-  //   setState(() => isMatching = false);
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) {
-  //       return AlertDialog(
-  //         title: Text(title),
-  //         content: Text(description),
-  //         actions: [
-  //           TextButton(
-  //             onPressed: () {
-  //               Navigator.of(context).pop();
-  //             },
-  //             child: const Text(
-  //               "Ok",
-  //               style: TextStyle(
-  //                 color: accentColor,
-  //               ),
-  //             ),
-  //           )
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
 
   void initializeUtilContexts(BuildContext context) {
     ScreenSizeUtil.context = context;

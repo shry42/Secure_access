@@ -58,6 +58,9 @@ class UpdateThankuouOfUniqueVisitor extends GetxController {
       AppController.setnoName('');
       AppController.setEmail('');
       AppController.setCallUpadteMethod(0);
+      AppController.setValidKey(0);
+      AppController.setFaceMatched(0);
+      AppController.setnoMatched('No');
       Get.offAll(const ThankyouFinalScreen());
       // if (status == true) {
       //   Get.defaultDialog(

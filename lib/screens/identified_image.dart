@@ -125,44 +125,44 @@ class _IdentifiedImageScreenState extends State<IdentifiedImageScreen> {
                           ),
                           onPressed: () async {
                             await ubfic.getNamesList('${widget.user.id}');
-                            if (AppController.accessToken == null) {
-                              Get.offAll(LoginPage());
-                            } else if (AppController.noMatched == 'No') {
-                              Get.offAll(
-                                // ProvidePhoneNumberScreen(
-                                //   firebaseKey: '${widget.user.id}',
-                                // ),
-                                DoYouHaveUniqueKey(
-                                  faceFeatures: widget.faceFeatures,
-                                  image: widget.dispImg,
-                                ),
-                                transition: Transition.rightToLeft,
-                                duration: const Duration(milliseconds: 500),
-                              );
-                              // Get.to(MayIKnowYourPurposeScreen(
-                              //   countryCode: selectedCountryCode,
-                              //   mobileNumber: _phoneController.text,
-                              //   image: widget.image ?? '',
-                              //   faceFeatures: widget.faceFeatures,
-                              // ));
-                            } else {
-                              // Get.offAll(
-                              //   WhomMeetingTodayScreen(
-                              //     firebaseKey: '${widget.user.id}',
-                              //   ),
-                              //   transition: Transition.rightToLeft,
-                              //   duration: const Duration(milliseconds: 500),
-                              // );
-                              Get.to(CarryingAssetsScreen(
-                                countryCode: AppController.countryCode,
-                                fullName: AppController.noName,
-                                email: AppController.email,
-                                mobNo: AppController.mobile,
-                                // image: widget.image,
-                                // faceFeatures: widget.faceFeatures,
+                            // if (AppController.accessToken == null) {
+                            //   Get.offAll(LoginPage());
+                            // } else
+                            // if (AppController.noMatched == 'No') {
+                            Get.offAll(
+                              DoYouHaveUniqueKey(
+                                faceFeatures: widget.faceFeatures,
+                                image: widget.dispImg,
                                 firebaseKey: AppController.firebaseKey,
-                              ));
-                            }
+                              ),
+                              transition: Transition.rightToLeft,
+                              duration: const Duration(milliseconds: 500),
+                            );
+                            // Get.to(MayIKnowYourPurposeScreen(
+                            //   countryCode: selectedCountryCode,
+                            //   mobileNumber: _phoneController.text,
+                            //   image: widget.image ?? '',
+                            //   faceFeatures: widget.faceFeatures,
+                            // ));
+                            // }
+                            // else {
+                            // Get.offAll(
+                            //   WhomMeetingTodayScreen(
+                            //     firebaseKey: '${widget.user.id}',
+                            //   ),
+                            //   transition: Transition.rightToLeft,
+                            //   duration: const Duration(milliseconds: 500),
+                            // );
+                            // Get.to(CarryingAssetsScreen(
+                            //   countryCode: AppController.countryCode,
+                            //   fullName: AppController.noName,
+                            //   email: AppController.email,
+                            //   mobNo: AppController.mobile,
+                            //   // image: widget.image,
+                            //   // faceFeatures: widget.faceFeatures,
+                            //   firebaseKey: AppController.firebaseKey,
+                            // ));
+                            // }
                           },
                           child: const Text(
                             'Yes',

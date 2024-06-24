@@ -25,7 +25,13 @@ class AppController {
   static int? _verification;
   static int? _visitorInviteStatus;
   static int? _callUpdateMethod;
-  static int? _isvalidKey;
+  static int? _isvalidKey = 0;
+  static int? _faceMatched = 0;
+
+  static get faceMatched => _faceMatched;
+  static setFaceMatched(value) {
+    _faceMatched = value;
+  }
 
   static get verification => _verification;
   static setVerification(value) {

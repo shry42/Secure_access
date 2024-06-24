@@ -1,13 +1,17 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:secure_access/controllers/app_controller.dart';
 import 'package:secure_access/controllers/final_thankyou_form_controller.dart';
 import 'package:secure_access/controllers/update_thankyou_unique_key_visitor.dart';
+import 'package:secure_access/model_face/user_model.dart';
 import 'package:secure_access/screens/thankyou_final_screen.dart';
 import 'package:syncfusion_flutter_signaturepad/signaturepad.dart';
 import 'dart:ui' as ui;
+
+import 'package:uuid/uuid.dart';
 
 class ThankyouScreen extends StatefulWidget {
   const ThankyouScreen(
@@ -24,7 +28,9 @@ class ThankyouScreen extends StatefulWidget {
       this.quantity,
       this.base64ToolImage,
       this.hasTool,
-      this.firebaseKey});
+      this.firebaseKey,
+      this.image,
+      this.faceFeatures});
 
   final String? countryCode,
       fullName,
@@ -37,6 +43,8 @@ class ThankyouScreen extends StatefulWidget {
       firebaseKey,
       base64ToolImage;
   final int? meetingFor, quantity, hasTool;
+  final String? image;
+  final FaceFeatures? faceFeatures;
 
   @override
   State<ThankyouScreen> createState() => _ThankyouScreenState();
@@ -52,6 +60,7 @@ class _ThankyouScreenState extends State<ThankyouScreen> {
   late String currentTime;
   late String currentDate;
   late String selectedCountryCode;
+  String? userId;
 
   @override
   void initState() {
@@ -81,38 +90,148 @@ class _ThankyouScreenState extends State<ThankyouScreen> {
     final bytes = await data.toByteData(format: ui.ImageByteFormat.png);
     // Convert the image to a base64 string
     final base64Image = base64Encode(bytes!.buffer.asUint8List());
-    if (AppController.callUpadateMethod == 1) {
+    userId = const Uuid().v1();
+    if (AppController.isValidKey == 1 && AppController.faceMatched == 1) {
       await utouv.upadteFinalUniqueKey(
         base64Image,
         widget.toolName,
         widget.make,
         widget.remark,
-        widget.firebaseKey ?? AppController.firebaseKey,
+        widget.firebaseKey ?? AppController.firebaseKey ?? userId,
         widget.base64ToolImage,
         widget.hasTool.toString(),
         widget.quantity,
       );
+
+      // AppController.setFirebaseKey(userId);
+      // UserModel user = UserModel(
+      //   id: widget.firebaseKey ?? userId,
+      //   name: widget.fullName,
+      //   image: widget.image,
+      //   registeredOn: '$currentDate $currentTime',
+      //   // registeredOn: '',
+      //   faceFeatures: widget.faceFeatures,
+      // );
+      // FirebaseFirestore.instance
+      //     .collection("users")
+      //     .doc(widget.firebaseKey)
+      //     .set(user.toJson())
+      //     .catchError((e) {});
+    } else if (AppController.faceMatched == 1 &&
+        AppController.isValidKey == 0) {
+      await thanksFormController.ThankyouFinalForm(
+        widget.fullName.toString(),
+        widget.email,
+        widget.countryCode,
+        widget.mobNo,
+        'company',
+        widget.purpose,
+        'description',
+        currentDate,
+        currentTime,
+        base64Image,
+        widget.toolName,
+        widget.make,
+        widget.remark,
+        widget.base64ToolImage,
+        widget.meetingFor!.toInt(),
+        widget.hasTool.toString(),
+        widget.quantity,
+        widget.firebaseKey ?? AppController.firebaseKey,
+      );
+    } else if (AppController.noMatched == 'Yes') {
+      // await utouv.upadteFinalUniqueKey(
+      //   base64Image,
+      //   widget.toolName,
+      //   widget.make,
+      //   widget.remark,
+      //   widget.firebaseKey ?? AppController.firebaseKey,
+      //   widget.base64ToolImage,
+      //   widget.hasTool.toString(),
+      //   widget.quantity,
+      // );
+      await thanksFormController.ThankyouFinalForm(
+        widget.fullName.toString(),
+        widget.email,
+        widget.countryCode,
+        widget.mobNo,
+        'company',
+        widget.purpose,
+        'description',
+        currentDate,
+        currentTime,
+        base64Image,
+        widget.toolName,
+        widget.make,
+        widget.remark,
+        widget.base64ToolImage,
+        widget.meetingFor!.toInt(),
+        widget.hasTool.toString(),
+        widget.quantity,
+        widget.firebaseKey ?? AppController.firebaseKey ?? userId,
+      );
+    } else if (AppController.faceMatched == 0 &&
+        AppController.isValidKey == 1) {
+      await utouv.upadteFinalUniqueKey(
+        base64Image,
+        widget.toolName,
+        widget.make,
+        widget.remark,
+        widget.firebaseKey ?? AppController.firebaseKey ?? userId,
+        widget.base64ToolImage,
+        widget.hasTool.toString(),
+        widget.quantity,
+      );
+      UserModel user = UserModel(
+        id: widget.firebaseKey ?? userId,
+        name: widget.fullName,
+        image: widget.image,
+        registeredOn: '$currentDate $currentTime',
+        // registeredOn: '',
+        faceFeatures: widget.faceFeatures,
+      );
+      FirebaseFirestore.instance
+          .collection("users")
+          .doc(widget.firebaseKey)
+          .set(user.toJson())
+          .catchError((e) {});
+    } else if (AppController.faceMatched == 0 &&
+        AppController.isValidKey == 0) {
+      UserModel user = UserModel(
+        id: widget.firebaseKey ?? userId,
+        name: widget.fullName,
+        image: widget.image,
+        registeredOn: '$currentDate $currentTime',
+        // registeredOn: '',
+        faceFeatures: widget.faceFeatures,
+      );
+      FirebaseFirestore.instance
+          .collection("users")
+          .doc(widget.firebaseKey)
+          .set(user.toJson())
+          .catchError((e) {});
+
+      await thanksFormController.ThankyouFinalForm(
+        widget.fullName.toString(),
+        widget.email,
+        widget.countryCode,
+        widget.mobNo,
+        'company',
+        widget.purpose,
+        'description',
+        currentDate,
+        currentTime,
+        base64Image,
+        widget.toolName,
+        widget.make,
+        widget.remark,
+        widget.base64ToolImage,
+        widget.meetingFor!.toInt(),
+        widget.hasTool.toString(),
+        widget.quantity,
+        widget.firebaseKey ?? AppController.firebaseKey ?? userId,
+      );
     }
-    await thanksFormController.ThankyouFinalForm(
-      widget.fullName.toString(),
-      widget.email,
-      widget.countryCode,
-      widget.mobNo,
-      'company',
-      widget.purpose,
-      'description',
-      currentDate,
-      currentTime,
-      base64Image,
-      widget.toolName,
-      widget.make,
-      widget.remark,
-      widget.base64ToolImage,
-      widget.meetingFor!.toInt(),
-      widget.hasTool.toString(),
-      widget.quantity,
-      widget.firebaseKey ?? AppController.firebaseKey,
-    );
 
     if (AppController.accessToken == null) {
       AppController.setnoMatched('No');

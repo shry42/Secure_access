@@ -124,14 +124,15 @@ class _ProvidePhoneNumberScreenState extends State<ProvidePhoneNumberScreen> {
                               await prefs.remove('token');
                               Get.offAll(LoginPage());
                             } else {
-                              String userId = Uuid().v1();
+                              // String userId = Uuid().v1();
                               if (AppController.firebaseKey == null) {
                                 Get.to(WhomMeetingTodayScreen(
-                                    fullName: AppController.noName,
-                                    email: AppController.email,
-                                    image: widget.image ?? '',
-                                    faceFeatures: widget.faceFeatures,
-                                    firebaseKey: userId));
+                                  fullName: AppController.noName,
+                                  email: AppController.email,
+                                  image: widget.image ?? '',
+                                  faceFeatures: widget.faceFeatures,
+                                  // firebaseKey: userId
+                                ));
                               }
                               Get.to(WhomMeetingTodayScreen(
                                 fullName: AppController.noName,

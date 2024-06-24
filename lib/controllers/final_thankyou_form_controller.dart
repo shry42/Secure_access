@@ -65,6 +65,14 @@ class ThankyouFormSubmissionController extends GetxController {
       String message = result['message'];
       AppController.setnoName('');
       AppController.setEmail('');
+      AppController.setMobile('');
+      AppController.setCountryCode('');
+      AppController.setUserName('');
+      AppController.setFirebaseKey(null);
+      AppController.setnoMatched('No');
+      AppController.setCallUpadteMethod(0);
+      AppController.setValidKey(0);
+      AppController.setFaceMatched(0);
       Get.offAll(const ThankyouFinalScreen());
       // if (status == true) {
       //   Get.defaultDialog(
@@ -81,6 +89,8 @@ class ThankyouFormSubmissionController extends GetxController {
       AppController.setnoMatched('No');
       AppController.setaccessToken(null);
       toast('unauthorized');
+      AppController.setnoMatched('No');
+      AppController.setCallUpadteMethod(0);
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.remove('token');
       Get.offAll(LoginPage());

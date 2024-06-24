@@ -41,7 +41,6 @@ class UserByFirebaseIdController extends GetxController {
 
       // userListObj = data.map((e) => UserByNumberModel.fromJson(e)).toList();
       AppController.setnoMatched('Yes');
-
       // return userListObj;
     } else {
       Map<String, dynamic> result = json.decode(response.body);
