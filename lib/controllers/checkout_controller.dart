@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:secure_access/controllers/app_controller.dart';
 import 'package:secure_access/screens/first_tab_screen.dart';
+import 'package:secure_access/screens/login_screen.dart';
 import 'package:secure_access/services/api_services.dart';
 
 class CheckoutController extends GetxController {
@@ -22,6 +23,7 @@ class CheckoutController extends GetxController {
       String message = result['message'];
 
       AppController.setVisitorInviteStatus(null);
+
       if (status == true) {
         Get.defaultDialog(
           title: "Success",
@@ -29,7 +31,7 @@ class CheckoutController extends GetxController {
           textConfirm: "OK",
           confirmTextColor: Colors.white,
           onConfirm: () {
-            Get.back();
+            Get.offAll(const FirstTabScreen());
           },
         );
       }
@@ -37,26 +39,33 @@ class CheckoutController extends GetxController {
       Map<String, dynamic> result = json.decode(response.body);
       String title = result['title'];
       String message = result['message'];
+      AppController.setmessage(message);
 
       if (title == 'Validation Failed') {
         Get.defaultDialog(
+          barrierDismissible: false,
           title: "Error",
           middleText: message,
           textConfirm: "OK",
           confirmTextColor: Colors.white,
           onConfirm: () {
-            Get.back(); // Close the dialog
+            Get.offAll(const FirstTabScreen());
           },
         );
       } else if (title == 'Unauthorized') {
         Get.defaultDialog(
+          barrierDismissible: false,
           title: "Error",
           middleText: "$message \nplease re login",
           textConfirm: "OK",
           confirmTextColor: Colors.white,
           onConfirm: () {
-            Get.offAll(const FirstTabScreen());
-            // Get.back(); // Close the dialog
+            AppController.setFaceMatched(0);
+            AppController.setValidKey(0);
+            AppController.setFirebaseKey(null);
+            AppController.setnoMatched(0);
+            AppController.setCallUpadteMethod(0);
+            Get.offAll(LoginPage());
           },
         );
       }

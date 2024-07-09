@@ -104,14 +104,12 @@ class _IdentifiedCheckoutScreenState extends State<IdentifiedCheckoutScreen> {
                           ),
                           onPressed: () async {
                             await ubfic.getNamesList('${widget.user.id}');
-                            if (AppController.visitorInviteStatus == 1) {
-                              await cc.checkout(AppController.visitorId);
-                              toast('Checkout successful');
-                              Get.offAll(const FirstTabScreen());
-                            } else {
-                              toast('Your Checkin is not yet approved');
-                              Get.offAll(const FirstTabScreen());
-                            }
+                            await cc.checkout(AppController.visitorId);
+                            // toast('Checkout successful');
+                            // Get.offAll(const FirstTabScreen());
+
+                            // toast('Your Checkin is not yet approved');
+                            // Get.offAll(const FirstTabScreen());
                           },
                           child: const Text(
                             'Yes',

@@ -476,6 +476,8 @@ class _CarryingAssetsScreenState extends State<CarryingAssetsScreen> {
                           width: 200,
                           child: Image.file(File(selectedImage!.path)),
                         ),
+                      if (displayImage == false)
+                        const CircularProgressIndicator(),
                     ],
                   ),
                 ),

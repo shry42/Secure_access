@@ -38,6 +38,7 @@ class DoYouHaveUniqueKey extends StatefulWidget {
 
 class _DoYouHaveUniqueKeyState extends State<DoYouHaveUniqueKey> {
   final TextEditingController uniqueKeyController = TextEditingController();
+  final TextEditingController mobileControlller = TextEditingController();
   final UniqueKeyController ukc = UniqueKeyController();
   final _formKey = GlobalKey<FormState>();
 
@@ -161,7 +162,6 @@ class _DoYouHaveUniqueKeyState extends State<DoYouHaveUniqueKey> {
                   ),
                 ),
                 const SizedBox(height: 15),
-
                 if (isYes == true)
                   SingleChildScrollView(
                     child: Column(
@@ -170,6 +170,7 @@ class _DoYouHaveUniqueKeyState extends State<DoYouHaveUniqueKey> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 15, vertical: 4),
                           child: TextFormField(
+                            keyboardType: TextInputType.number,
                             controller: uniqueKeyController,
                             onChanged: (value) {
                               // AppController.setemailId(emailController.text);
@@ -190,12 +191,42 @@ class _DoYouHaveUniqueKeyState extends State<DoYouHaveUniqueKey> {
                             },
                           ),
                         ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 4),
+                          child: TextFormField(
+                            keyboardType: TextInputType.number,
+                            controller: mobileControlller,
+                            onChanged: (value) {
+                              // AppController.setemailId(emailController.text);
+                              // c.userName.value = emailController.text;
+                            },
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 6, horizontal: 8),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              labelText: '    mobile number',
+                            ),
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(10),
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return "Please enter mobile number";
+                              }
+                            },
+                          ),
+                        ),
                         const SizedBox(height: 10),
                         ElevatedButton(
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
                                 await ukc.getUniqueVistorByUniqueKey(
-                                    uniqueKeyController.text);
+                                    uniqueKeyController.text,
+                                    mobileControlller.text);
                                 if (AppController.isValidKey == 1) {
                                   Get.to(CarryingAssetsScreen(
                                     countryCode: AppController.countryCode,
